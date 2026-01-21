@@ -1,38 +1,57 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
-import { SiteHeader } from "@/components/site-header"
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { fetchUsers } from "@/lib/api/users";
+import { columns } from "./columns";
+import { Skeleton } from "@/components/ui/skeleton";
+import { DataTable } from "@/components/data-table/data-table";
+
+// TAMBAHKAN IMPORT INI
 import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
-
-import data from "../../data.json"
-
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+} from "@tanstack/react-table";
 
 export default function Users() {
+  const {
+    data: users = [], // Beri default array kosong agar tidak error saat loading
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: fetchUsers,
+  });
+
+
+  const table = useReactTable({
+    data: users,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4 px-4 lg:px-6">
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-red-500 px-4 lg:px-6">Error fetching users.</div>
+    );
+  }
+
+  // KIRIM PROPS 'table' BUKAN 'data'
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-            
-              <DataTable data={data} />
-            </div>
-          </div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  )
+    <div className="p-6">
+     <div className="rounded-lg overflow-hidden">
+         <DataTable table={table} columns={columns} />
+     </div>
+    </div>
+  );
 }
