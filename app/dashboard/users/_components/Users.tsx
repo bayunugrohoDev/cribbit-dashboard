@@ -6,7 +6,6 @@ import { columns } from "./columns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable } from "@/components/data-table/data-table";
 
-// TAMBAHKAN IMPORT INI
 import {
   useReactTable,
   getCoreRowModel,
@@ -15,7 +14,7 @@ import {
 
 export default function Users() {
   const {
-    data: users = [], // Beri default array kosong agar tidak error saat loading
+    data: users = [], 
     isLoading,
     isError,
   } = useQuery({
@@ -46,7 +45,6 @@ export default function Users() {
     );
   }
 
-  // KIRIM PROPS 'table' BUKAN 'data'
   return (
     <div className="p-6">
      <div className="rounded-lg overflow-hidden">

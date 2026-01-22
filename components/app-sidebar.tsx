@@ -38,11 +38,7 @@ import {
 import Image from "next/image";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+  // Removed hardcoded user data as it will now come from props
   navMain: [
     {
       title: "Dashboard",
@@ -101,22 +97,22 @@ const data = {
   //         url: "#",
   //       },
   //     ],
-  //   },
-  //   {
-  //     title: "Prompts",
-  //     icon: IconFileAi,
-  //     url: "#",
-  //     items: [
-  //       {
-  //         title: "Active Proposals",
-  //         url: "#",
-  //       },
-  //       {
-  //         title: "Archived",
-  //         url: "#",
-  //       },
-  //     ],
-  //   },
+    //   },
+    //   {
+    //     title: "Prompts",
+    //     icon: IconFileAi,
+    //     url: "#",
+    //     items: [
+    //       {
+    //         title: "Active Proposals",
+    //         url: "#",
+    //       },
+    //       {
+    //         title: "Archived",
+    //         url: "#",
+    //       },
+    //     ],
+    //   },
   // ],
   navSecondary: [
     {
@@ -154,7 +150,13 @@ const data = {
   // ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sidebar> & {
+  user: {
+    name: string;
+    email: string;
+    avatar: string;
+  };
+}) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -186,8 +188,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} /> {/* Pass the user prop here */}
       </SidebarFooter>
     </Sidebar>
   );
 }
+
