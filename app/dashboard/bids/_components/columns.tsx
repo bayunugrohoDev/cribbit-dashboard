@@ -20,11 +20,11 @@ import { Bid } from "./schema";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
 // Define the meta type for the table
-declare module "@tanstack/react-table" {
-  interface TableMeta {
-    openModal: (bid: Bid) => void;
-  }
-}
+// declare module "@tanstack/react-table" {
+//   interface TableMeta {
+//     openModal: (bid: Bid) => void;
+//   }
+// }
 
 export const columns: ColumnDef<Bid>[] = [
   {
@@ -154,6 +154,8 @@ export const columns: ColumnDef<Bid>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
+            // TODO :
+            //@ts-expect-error
               onSelect={() => table.options.meta?.openModal(bid)}
             >
               Update Status

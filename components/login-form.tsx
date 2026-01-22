@@ -50,23 +50,25 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  value={'bayunugroho963@gmail.com'}
                 />
               </Field>
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
+                  {/* <a
                     href="#"
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </a> */}
                 </div>
                 <Input 
                   id="password" 
                   name="password" // Penting untuk FormData
                   type="password" 
                   required 
+                  value={'1122334455'}
                 />
               </Field>
               

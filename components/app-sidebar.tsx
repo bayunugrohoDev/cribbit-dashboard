@@ -56,15 +56,15 @@ const data = {
       icon: IconTable,
     },
     {
-      title: "Makelars",
+      title: "Agents (Beta)",
       url: "#",
       icon: IconUsers,
     },
-    {
-      title: "Chat",
-      url: "#",
-      icon: IconMessage,
-    },
+    // {
+    //   title: "Chat (Beta)",
+    //   url: "#",
+    //   icon: IconMessage,
+    // },
   ],
   // navClouds: [
   //   {
@@ -120,11 +120,11 @@ const data = {
       url: "#",
       icon: IconSettings,
     },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
+    // {
+    //   title: "Get Help",
+    //   url: "#",
+    //   icon: IconHelp,
+    // },
     // {
     //   title: "Search",
     //   url: "#",
@@ -153,7 +153,7 @@ const data = {
 export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sidebar> & {
   user: {
     name: string;
-    email: string;
+    email?: string;
     avatar: string;
   };
 }) {
