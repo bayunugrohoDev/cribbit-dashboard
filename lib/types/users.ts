@@ -1,12 +1,9 @@
-export type UserStatus = "active" | "pending" | "banned";
-export type UserRole = "admin" | "editor" | "viewer";
+import { Database } from '../supabase/database.types';
 
-export type User = {
-  id: string;
-  name: string;
-  avatar: string;
-  email: string;
-  registeredAt: string; // Using string for simplicity, can be Date
-  status: UserStatus;
-  role: UserRole;
+type ProfileRow = Database['public']['Tables']['profiles']['Row'];
+
+export type User = ProfileRow & {
+  registered_at: string | null;
+  email: string | null;
+  last_login: string | null;
 };

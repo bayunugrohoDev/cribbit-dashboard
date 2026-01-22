@@ -52,7 +52,7 @@ const data = {
     },
     {
       title: "Bids",
-      url: "#",
+      url: "/dashboard/bids",
       icon: IconTable,
     },
     {
