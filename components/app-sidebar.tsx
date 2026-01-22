@@ -175,7 +175,7 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
                   height={32}
                 />
                 <span className="text-xl font-bold">
-                  Cribbit Dashboard.
+                  Cribbit Dashboard
                 </span>
               </a>
             </SidebarMenuButton>

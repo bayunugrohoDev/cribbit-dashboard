@@ -126,11 +126,11 @@ export const columns: ColumnDef<UserSchema>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[160px]">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <DropdownMenuItem
+            <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(user.id)}
             >
-              Copy user ID
-            </DropdownMenuItem> */}
+              View profile
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Edit user</DropdownMenuItem>
             <DropdownMenuItem className="text-red-500 hover:!text-red-500">

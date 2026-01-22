@@ -1,0 +1,7 @@
+**Pending:** A bid that has been submitted but is awaiting review or approval from an administrator. It's in a state of limbo, not yet active or rejected.
+
+**Outbid:** Your bid has been surpassed by another bidder. You are no longer the highest bidder for the item or property.
+
+**Accepted:** The bid has been officially approved and finalized, often by the seller or administrator. This usually signifies the successful completion of the bidding process for that specific bid.
+
+**Winning:** Your bid is currently the highest active bid. You are in the lead to acquire the item or property, but the bidding period may still be open, and you could potentially be outbid.

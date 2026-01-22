@@ -19,26 +19,20 @@ import { Badge } from "@/components/ui/badge";
 import { Bid } from "./schema";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
+// Define the meta type for the table
+declare module "@tanstack/react-table" {
+  interface TableMeta {
+    openModal: (bid: Bid) => void;
+  }
+}
+
 export const columns: ColumnDef<Bid>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
+    id: "number",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="No" />
     ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
+    cell: ({ row }) => <span className="px-2">{row.index + 1}</span>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -59,6 +53,19 @@ export const columns: ColumnDef<Bid>[] = [
           </Avatar>
           <div className="font-medium">{bid.userName}</div>
         </div>
+      );
+    },
+  },
+  {
+    id: "address",
+    accessorFn: (row) => `${row.route} ${row.streetNumber}, ${row.postal_town}`,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Address" />
+    ),
+    cell: ({ row }) => {
+      const { route, streetNumber, postal_town } = row.original;
+      return (
+        <div className="text-sm text-muted-foreground">{`${route} ${streetNumber}, ${postal_town}`}</div>
       );
     },
   },
@@ -91,12 +98,23 @@ export const columns: ColumnDef<Bid>[] = [
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
       return (
-        <Badge 
+        <Badge
+          // className={
+          //   status === "Winning"
+          //     ? "bg-green-300"
+          //     : status === "Outbid"
+          //     ? "bg-red-300"
+          //     : undefined
+          // }
+          className={status === "Accepted" ? "bg-green-300 text-black" : undefined}
           variant={
-            status === "Winning" ? "default" 
-            : status === "Pending" ? "outline"
-            : status === "Accepted" ? "outline" 
-            : "secondary"
+            status === "Winning"
+              ? "default"
+              : status === "Pending"
+              ? "outline"
+              : status === "Accepted"
+              ? "outline"
+              : "secondary"
           }
         >
           {status}
@@ -111,7 +129,8 @@ export const columns: ColumnDef<Bid>[] = [
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("date"));
-      const formatted = date.toLocaleDateString("sv-SE", { // Swedish locale
+      const formatted = date.toLocaleDateString("sv-SE", {
+        // Swedish locale
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -121,7 +140,7 @@ export const columns: ColumnDef<Bid>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const bid = row.original;
 
       return (
@@ -134,14 +153,20 @@ export const columns: ColumnDef<Bid>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onSelect={() => table.options.meta?.openModal(bid)}
+            >
+              Update Status
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             {/* <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(bid.id)}
             >
               Copy bid ID
             </DropdownMenuItem> */}
-            <DropdownMenuSeparator />
+            <DropdownMenuItem>View Property details</DropdownMenuItem>
+            <DropdownMenuItem>View Bid details</DropdownMenuItem>
             <DropdownMenuItem>View user profile</DropdownMenuItem>
-            <DropdownMenuItem>View property details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
