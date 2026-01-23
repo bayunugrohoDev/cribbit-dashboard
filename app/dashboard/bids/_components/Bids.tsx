@@ -13,7 +13,6 @@ import { fetchBids } from "@/lib/api/bids";
 import { columns } from "./columns";
 import { Bid } from "./schema";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { UpdateStatusModal } from "./UpdateStatusModal";

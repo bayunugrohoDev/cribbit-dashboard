@@ -20,6 +20,7 @@ import {
   IconSettings,
   IconTable,
   IconUsers,
+  IconHome
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
@@ -56,15 +57,20 @@ const data = {
       icon: IconTable,
     },
     {
-      title: "Agents (Beta)",
+      title: "Properties",
+      url: "/dashboard/properties",
+      icon: IconHome,
+    },
+    {
+      title: "Agents (wip)",
       url: "#",
       icon: IconUsers,
     },
-    // {
-    //   title: "Chat (Beta)",
-    //   url: "#",
-    //   icon: IconMessage,
-    // },
+    {
+      title: "Chat (wip)",
+      url: "#",
+      icon: IconMessage,
+    },
   ],
   // navClouds: [
   //   {

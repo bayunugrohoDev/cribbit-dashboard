@@ -17,6 +17,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconCircleCheckFilled } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const formatDate = (dateString: string | null) => {
   if (!dateString) return "-";
@@ -115,7 +117,6 @@ export const columns: ColumnDef<UserSchema>[] = [
     id: "actions",
     cell: ({ row }) => {
       const user = row.original;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -125,12 +126,12 @@ export const columns: ColumnDef<UserSchema>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[160px]">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
-            >
-              View profile
+            {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+            <DropdownMenuItem>
+              <Link className="w-full" href={`/dashboard/users/${user.id}`}>View User</Link>
             </DropdownMenuItem>
+            <DropdownMenuItem>Chat</DropdownMenuItem>
+            <DropdownMenuItem>Send Email</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Edit user</DropdownMenuItem>
             <DropdownMenuItem className="text-red-500 hover:!text-red-500">

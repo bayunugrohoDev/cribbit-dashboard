@@ -12,12 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
 import { Bid } from "./schema";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import Link from "next/link";
 
 // Define the meta type for the table
 // declare module "@tanstack/react-table" {
@@ -106,7 +106,9 @@ export const columns: ColumnDef<Bid>[] = [
           //     ? "bg-red-300"
           //     : undefined
           // }
-          className={status === "Accepted" ? "bg-green-300 text-black" : undefined}
+          className={
+            status === "Accepted" ? "bg-green-300 text-black" : undefined
+          }
           variant={
             status === "Winning"
               ? "default"
@@ -154,8 +156,8 @@ export const columns: ColumnDef<Bid>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-            // TODO :
-            //@ts-expect-error
+              // TODO :
+              //@ts-expect-error
               onSelect={() => table.options.meta?.openModal(bid)}
             >
               Update Status
@@ -166,9 +168,17 @@ export const columns: ColumnDef<Bid>[] = [
             >
               Copy bid ID
             </DropdownMenuItem> */}
-            <DropdownMenuItem>View Property details</DropdownMenuItem>
-            <DropdownMenuItem>View Bid details</DropdownMenuItem>
-            <DropdownMenuItem>View user profile</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href={`/dashboard/properties/1}`} className="text-black">
+                View property details
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>View bid details</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href={`/dashboard/users/${bid.id}`} className="text-black">
+                View user details
+              </Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
