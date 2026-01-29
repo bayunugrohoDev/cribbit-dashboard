@@ -58,12 +58,13 @@ export const columns: ColumnDef<Bid>[] = [
   },
   {
     id: "address",
-    accessorFn: (row) => `${row.route} ${row.streetNumber}, ${row.postal_town}`,
+    accessorFn: (row) =>
+      `${row.locations.route} ${row.locations.streetNumber}, ${row.locations.postal_town}`,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Address" />
     ),
     cell: ({ row }) => {
-      const { route, streetNumber, postal_town } = row.original;
+      const { route, streetNumber, postal_town } = row.original.locations;
       return (
         <div className="text-sm text-muted-foreground">{`${route} ${streetNumber}, ${postal_town}`}</div>
       );
@@ -154,7 +155,7 @@ export const columns: ColumnDef<Bid>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
             <DropdownMenuItem
               // TODO :
               //@ts-expect-error
@@ -169,11 +170,14 @@ export const columns: ColumnDef<Bid>[] = [
               Copy bid ID
             </DropdownMenuItem> */}
             <DropdownMenuItem>
-              <Link href={`/dashboard/properties/1}`} className="text-black">
+              <Link
+                href={`/dashboard/properties/${bid.locations.location_id}`}
+                className="text-black"
+              >
                 View property details
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>View bid details</DropdownMenuItem>
+            {/* <DropdownMenuItem>View bid details</DropdownMenuItem> */}
             <DropdownMenuItem>
               <Link href={`/dashboard/users/${bid.id}`} className="text-black">
                 View user details

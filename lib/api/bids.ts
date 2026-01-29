@@ -9,6 +9,5 @@ export const fetchBids = async () => {
   }
 
   const data = await response.json();
-  
   return z.array(bidSchema).parse(data);
 };

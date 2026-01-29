@@ -67,9 +67,9 @@ const data = {
       icon: IconUsers,
     },
     {
-      title: "Chat (wip)",
+      title: "Owners (wip)",
       url: "#",
-      icon: IconMessage,
+      icon:  IconHome,
     },
   ],
   // navClouds: [

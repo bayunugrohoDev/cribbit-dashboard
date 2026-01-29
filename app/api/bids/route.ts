@@ -1,106 +1,96 @@
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-const bidsData = [
-  {
-    id: "BID-8782",
-    userName: "Olivia Martin",
-    userAvatar: "/images/avatars/01.png",
-    route: "Elmegatan",
-    streetNumber: "12A",
-    postal_town: "Stockholm",
-    price_min: 2500000,
-    price_max: 2700000,
-    date: "2024-07-20T10:30:00Z",
-    status: "Pending",
-  },
-  {
-    id: "BID-1312",
-    userName: "Victor Svensson",
-    userAvatar: "/images/avatars/01.png",
-    route: "Elmegatan",
-    streetNumber: "12A",
-    postal_town: "Stockholm",
-    price_min: 1500000,
-    price_max: 1700000,
-    date: "2024-07-20T10:30:00Z",
-    status: "Outbid",
-  },
-  {
-    id: "BID-7878",
-    userName: "Jackson Lee",
-    userAvatar: "/images/avatars/02.png",
-    route: "Björkvägen",
-    streetNumber: "5",
-    postal_town: "Göteborg",
-    price_min: 2800000,
-    price_max: 3000000,
-    date: "2024-07-20T11:00:00Z",
-    status: "Winning",
-  },
-  {
-    id: "BID-4567",
-    userName: "Isabella Nguyen",
-    userAvatar: "/images/avatars/03.png",
-    route: "Vasagatan",
-    streetNumber: "3",
-    postal_town: "Malmö",
-    price_min: 2600000,
-    price_max: 2650000,
-    date: "2024-07-20T11:15:00Z",
-    status: "Outbid",
-  },
-  {
-    id: "BID-9876",
-    userName: "William Kim",
-    route: "Storgatan",
-    streetNumber: "10",
-    postal_town: "Uppsala",
-    price_min: 3100000,
-    price_max: 3200000,
-    date: "2024-07-21T09:00:00Z",
-    status: "Accepted",
-  },
-  {
-    id: "BID-2345",
-    userName: "Sofia Davis",
-    userAvatar: "/images/avatars/05.png",
-    route: "Kungsgatan",
-    streetNumber: "7",
-    postal_town: "Linköping",
-    price_min: 2900000,
-    price_max: 2950000,
-    date: "2024-07-21T09:05:00Z",
-    status: "Outbid",
-  },
-  {
-    id: "BID-3456",
-    userName: "Ethan Brown",
-    route: "Drottninggatan",
-    streetNumber: "22",
-    postal_town: "Västerås",
-    price_min: 3050000,
-    price_max: 3150000,
-    date: "2024-07-22T10:00:00Z",
-    status: "Pending",
-  },
-  {
-    id: "BID-5678",
-    userName: "Mia Wilson",
-    userAvatar: "/images/avatars/06.png",
-    route: "Parkgatan",
-    streetNumber: "1",
-    postal_town: "Örebro",
-    price_min: 3060000,
-    price_max: 3100000,
-    date: "2024-07-22T11:30:00Z",
-    status: "Pending",
-  },
-];
-
 export async function GET() {
-  // In a real app, you would fetch this from a database.
-  // Here, we're returning the hardcoded array after a short delay to simulate a network request.
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  return NextResponse.json(bidsData);
+  const supabase = await createClient();
+
+  try {
+    // 1. Fetch all bids
+    const { data: bids, error: bidsError } = await supabase
+      .from("bids")
+      .select(
+        `id, created_at, price, price_min, price_max, status, user_id, location_id`
+      )
+      .order("created_at", { ascending: false });
+
+    if (bidsError) {
+      console.error("Error fetching bids:", bidsError);
+      throw bidsError;
+    }
+
+    if (!bids || bids.length === 0) {
+      return NextResponse.json([]);
+    }
+
+    // 2. Collect unique IDs
+    const userIds = [...new Set(bids.map((bid) => bid.user_id))];
+    const locationIds = [...new Set(bids.map((bid) => bid.location_id))];
+
+    // 3. Fetch corresponding profiles and locations in parallel
+    const [
+      { data: profiles, error: profilesError },
+      { data: locations, error: locationsError },
+    ] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select(`id, full_name, avatar_url`)
+        .in("id", userIds),
+      supabase
+        .from("locations")
+        .select(`id, street, street_number, city, country`)
+        .in("id", locationIds),
+    ]);
+
+    if (profilesError) throw profilesError;
+    if (locationsError) throw locationsError;
+
+    // Create maps for quick lookups
+    const profilesMap = new Map(profiles.map((p) => [p.id, p]));
+    const locationsMap = new Map(locations.map((l) => [l.id, l]));
+
+    // 4. Stitch the data together
+    const formattedBids = bids.map((bid) => {
+      const user = profilesMap.get(bid.user_id);
+      const location = locationsMap.get(bid.location_id);
+      // console.log('location:', location);
+      return {
+        id: bid.id,
+        userName: user?.full_name || "Unknown User",
+        userAvatar: user?.avatar_url || "",
+        locations: {
+          location_id: location?.id,
+          route: location?.street,
+          streetNumber: location?.street_number,
+          postal_town: location?.city,
+          // country: location?.country,
+        },
+        // route: location?.street || "",
+        // streetNumber: location?.street_number || "",
+        // postal_town: location?.city || "",
+        price_min: bid.price_min || 0,
+        price_max: bid.price_max || 0,
+        status:
+          bid.status === "Winning" ||
+          bid.status === "Outbid" ||
+          bid.status === "Accepted"
+            ? bid.status
+            : "Pending",
+        date: bid.created_at || "",
+      };
+    });
+    console.log("formattedBids:", formattedBids);
+    return NextResponse.json(formattedBids);
+  } catch (error) {
+    console.error("API Route Error:", error);
+    return new Response(
+      JSON.stringify({
+        message: "Error fetching bids",
+        error: (error as Error).message,
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 }

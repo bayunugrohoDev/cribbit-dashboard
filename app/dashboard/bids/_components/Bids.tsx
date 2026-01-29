@@ -40,6 +40,7 @@ export default function Bids() {
     data: bids = [],
     isLoading,
     isError,
+    error,
   } = useQuery({
     queryKey: ["bids"],
     queryFn: fetchBids,
@@ -95,12 +96,16 @@ export default function Bids() {
   }
 
   if (isError) {
+    console.log('data bids', bids);
+    console.log('error', error);
     return (
       <div className="text-red-500">
         Error fetching bids. Please try again later.
       </div>
     );
   }
+
+  console.log('bids', bids);
 
   return (
     <div className="p-6">

@@ -12,7 +12,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -66,17 +65,17 @@ export const columns: ColumnDef<UserSchema>[] = [
     },
     enableHiding: false,
   },
-  // {
-  //   accessorKey: "role",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Role" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     const role = row.getValue("role");
-  //     if (!role) return "-";
-  //     return <Badge variant="outline" className="capitalize">{String(role)}</Badge>;
-  //   },
-  // },
+  {
+    accessorKey: "role",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Role" />
+    ),
+    cell: ({ row }) => {
+      const role = row.getValue("role");
+      if (!role) return "-";
+      return <Badge variant="outline" className="capitalize">{String(role)}</Badge>;
+    },
+  },
   {
     accessorKey: "registered_at",
     header: ({ column }) => (
