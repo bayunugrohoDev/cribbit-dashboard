@@ -1,3 +1,4 @@
+import { propertySchemaDetail } from "@/app/dashboard/properties/[propertyId]/_components/schema";
 import { propertySchema } from "@/app/dashboard/properties/_components/schema";
 import { z } from "zod";
 
@@ -89,3 +90,18 @@ export const properties = [
       date: "2024-07-23T14:05:00Z",
     },
   ];
+
+
+
+export type PropertyDetail = z.infer<typeof propertySchemaDetail>;
+
+export const fetchPropertiesDetail = async (propertyId: string): Promise<PropertyDetail> => {
+  const response = await fetch(`/api/properties/${propertyId}`);
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+
+  const data = await response.json();
+  return propertySchemaDetail.parse(data);
+};
