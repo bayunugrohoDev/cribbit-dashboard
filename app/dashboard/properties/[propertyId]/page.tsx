@@ -10,33 +10,53 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { UserBids } from "./_components/bid-list";
 import { useQuery } from "@tanstack/react-query";
-import {  fetchPropertiesDetail } from "@/lib/api/properties";
+import { fetchPropertiesDetail } from "@/lib/api/properties";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 import { useParams } from "next/navigation";
+import { getCurrentUser } from "@/lib/api/users";
+import { fetchBidsByLocationId } from "@/lib/api/bids";
 
 export default function PropertyDetailPage() {
   const params = useParams<{ propertyId: string }>();
-  console.log('params.propertyId', params.propertyId);
 
   const {
     data: property,
-    isLoading,
-    isError,
+    isLoading: isPropertyLoading,
+    isError: isPropertyError,
   } = useQuery({
     queryKey: ["property", params.propertyId],
     queryFn: () => fetchPropertiesDetail(params.propertyId),
     enabled: !!params.propertyId,
   });
 
-  if (isLoading) {
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => getCurrentUser(),
+  });
+
+  const {
+    data: bids,
+    isLoading: isBidsLoading,
+    isError: isBidsError,
+  } = useQuery({
+    queryKey: ["bids", params.propertyId],
+    queryFn: () => fetchBidsByLocationId(params.propertyId),
+    enabled: !!params.propertyId,
+  });
+
+  if (isPropertyLoading || isUserLoading || isBidsLoading) {
     return <LoadingSkeleton />;
   }
 
-  if (isError || !property) {
+  if (isPropertyError || isUserError || isBidsError || !property) {
     return (
       <div className="flex flex-col gap-4 p-4 md:p-8">
         <h1 className="text-3xl font-bold text-red-500">
-          Error fetching property data.
+          Error fetching data.
         </h1>
         <p>Please try again later.</p>
       </div>
@@ -115,7 +135,7 @@ export default function PropertyDetailPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <UserBids />
+          <UserBids bids={bids} currentUser={user} />
         </CardContent>
       </Card>
     </div>

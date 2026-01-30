@@ -16,44 +16,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tables } from "@/lib/supabase/database.types";
+import { User } from "@supabase/supabase-js";
 import { EllipsisVertical } from "lucide-react";
 import Link from "next/link";
-
-// Data dummy dengan status khusus Bidding
-const bids = [
-  {
-    id: "BID-101",
-    full_name: "Isabella Nguyen",
-    price_min: 5200000,
-    price_max: 5500000,
-    status: "Winning", // Penawar tertinggi saat ini
-    date: "2024-07-20T11:15:00Z",
-  },
-  {
-    id: "BID-102",
-    full_name: "Jackson Lee",
-    price_min: 4800000,
-    price_max: 5100000,
-    status: "Outbid", // Sudah disalip oleh Isabella
-    date: "2024-07-20T11:00:00Z",
-  },
-  {
-    id: "BID-103",
-    full_name: "Victor Svensson",
-    price_min: 4500000,
-    price_max: 4700000,
-    status: "Accepted", // Penawaran disetujui oleh owner
-    date: "2024-07-20T10:30:00Z",
-  },
-  {
-    id: "BID-104",
-    full_name: "Olivia Martin",
-    price_min: 4000000,
-    price_max: 4200000,
-    status: "Pending", // Sedang menunggu review
-    date: "2024-07-20T09:30:00Z",
-  },
-];
 
 // Helper styling untuk status Bidding
 const getBidStatusBadge = (status: string) => {
@@ -70,7 +36,19 @@ const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("sv-SE").format(amount);
 };
 
-export function UserBids() {
+interface Bid extends Tables<"bids"> {
+  profiles: Tables<"profiles">;
+}
+
+interface UserBidsProps {
+  bids: Bid[] | null;
+  currentUser: User | null;
+}
+
+export function UserBids({ bids, currentUser }: UserBidsProps) {
+  if (!bids || bids.length === 0) {
+    return <p>No bids for this property yet.</p>;
+  }
   return (
     <div className="rounded-md border">
       <Table>
@@ -86,23 +64,23 @@ export function UserBids() {
         </TableHeader>
         <TableBody>
           {bids.map((bid) => (
-            <TableRow key={bid.id}>
-              <TableCell className="font-medium">{bid.full_name}</TableCell>
+            <TableRow key={bid.id} className={bid.user_id === currentUser?.id ? "bg-blue-50" : ""}>
+              <TableCell className="font-medium">{bid.profiles.full_name}</TableCell>
               <TableCell>
                 <div className="flex flex-col">
                   <span className="text-sm">
-                    {formatCurrency(bid.price_min)} - {formatCurrency(bid.price_max)}
+                    {formatCurrency(bid.price_min || 0)} - {formatCurrency(bid.price_max || 0)}
                   </span>
                 </div>
               </TableCell>
               <TableCell className="text-muted-foreground text-sm">
-                {new Date(bid.date).toLocaleDateString("id-ID", {
+                {new Date(bid.created_at || "").toLocaleDateString("id-ID", {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
                 })}
               </TableCell>
-              <TableCell>{getBidStatusBadge(bid.status)}</TableCell>
+              <TableCell>{getBidStatusBadge(bid.status || "Unknown")}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -112,7 +90,7 @@ export function UserBids() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-[180px]">
                     <DropdownMenuItem asChild>
-                      <Link href={`/dashboard/users/${bid.id}`}>View Profile</Link>
+                      <Link href={`/dashboard/users/${bid.user_id}`}>View Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>Message User</DropdownMenuItem>
                     <DropdownMenuSeparator />

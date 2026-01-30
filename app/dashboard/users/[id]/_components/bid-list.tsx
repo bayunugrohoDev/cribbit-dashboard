@@ -8,31 +8,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tables } from "@/lib/supabase/database.types";
 
-// Data dummy yang sudah disesuaikan (tanpa userAvatar, status, price_min/max)
-const properties = [
+interface Bid extends Tables<"bids"> {
+  locations: Tables<"locations">;
+}
 
-  {
-    id: "BID-1312",
-    route: "Elmegatan",
-    streetNumber: "12A",
-    postal_town: "Stockholm",
-    owner: "-",
-    total_bids: 2222311,
-    date: "2024-07-20T10:30:00Z",
-  },
-  {
-    id: "BID-7878",
-    route: "Björkvägen",
-    streetNumber: "5",
-    postal_town: "Göteborg",
-    owner: "Jackson Lee",
-    total_bids: 3000000,
-    date: "2024-07-20T11:00:00Z",
-  },
-];
+interface UserBidsProps {
+  bids: Bid[] | null;
+}
 
-export function UserBids() {
+export function UserBids({ bids }: UserBidsProps) {
+  if (!bids || bids.length === 0) {
+    return <p>This user has not made any bids yet.</p>;
+  }
   return (
     <Table>
       <TableCaption>A list of recent property bids.</TableCaption>
@@ -46,22 +35,24 @@ export function UserBids() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {properties.map((property) => (
-          <TableRow key={property.id}>
+        {bids.map((bid) => (
+          <TableRow key={bid.id}>
             <TableCell className="font-medium">
-              {property.route} {property.streetNumber}, {property.postal_town}
+              {bid.locations.formatted_address}
             </TableCell>
-            <TableCell>{property.owner}</TableCell>
-            <TableCell>{property.total_bids} SEK</TableCell>
+            <TableCell>-</TableCell>
+            <TableCell>{bid.price_min + "-" + bid.price_max} SEK</TableCell>
             <TableCell>
-              {new Date(property.date).toLocaleDateString("id-ID", {
+              {new Date(bid.created_at || "").toLocaleDateString("id-ID", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
               })}
             </TableCell>
             <TableCell className="text-right">
-              <Badge className="bg-amber-100 text-amber-700">Requested</Badge>
+              <Badge className="bg-amber-100 text-amber-700">
+                {bid.status || "Unknown"}
+              </Badge>
             </TableCell>
           </TableRow>
         ))}

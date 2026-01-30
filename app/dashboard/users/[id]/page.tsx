@@ -1,4 +1,5 @@
-// import EditUser from "@/components/EditUser";
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Breadcrumb,
@@ -8,27 +9,63 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Progress } from "@/components/ui/progress";
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 
+import { fetchBidsByUserId } from "@/lib/api/bids";
+import { fetchProfileById } from "@/lib/api/users";
+import { useQuery } from "@tanstack/react-query";
 import {
   BadgeCheck,
   Candy,
   Citrus,
-  MessageCircle,
   MessageCircleIcon,
   Shield,
 } from "lucide-react";
+import { useParams } from "next/navigation";
 import AppLineChart from "./_components/history-login-chart";
 import { UserBids } from "./_components/bid-list";
+import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 
 const SingleUsersPage = () => {
+  const params = useParams<{ id: string }>();
+
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    isError: isProfileError,
+  } = useQuery({
+    queryKey: ["profile", params.id],
+    queryFn: () => fetchProfileById(params.id),
+    enabled: !!params.id,
+  });
+
+  const {
+    data: bids,
+    isLoading: isBidsLoading,
+    isError: isBidsError,
+  } = useQuery({
+    queryKey: ["bids", params.id],
+    queryFn: () => fetchBidsByUserId(params.id),
+    enabled: !!params.id,
+  });
+
+  if (isProfileLoading || isBidsLoading) {
+    return <LoadingSkeleton />;
+  }
+
+  if (isProfileError || isBidsError) {
+    return <div>Error loading data</div>;
+  }
+
+  if (!profile) {
+    return <div>User not found</div>;
+  }
+
   return (
     <div className="p-6">
       <Breadcrumb>
@@ -46,7 +83,7 @@ const SingleUsersPage = () => {
           <BreadcrumbSeparator />
 
           <BreadcrumbItem>
-            <BreadcrumbPage>Bayu Nugroho</BreadcrumbPage>
+            <BreadcrumbPage>{profile.full_name || "-"}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -132,13 +169,17 @@ const SingleUsersPage = () => {
               <div>
                 <Avatar className="size-12">
                   <AvatarImage
-                    src="https://github.com/shadcn.png"
+                    src={profile.avatar_url || ""}
                     alt="user-icon"
                   />
-                  <AvatarFallback>User</AvatarFallback>
+                  <AvatarFallback>
+                    {profile.full_name?.charAt(0).toUpperCase() || "U"}
+                  </AvatarFallback>
                 </Avatar>
 
-                <h1 className="text-xl font-semibold">Bayu Nugroho</h1>
+                <h1 className="text-xl font-semibold">
+                  {profile.full_name || "-"}
+                </h1>
               </div>
               <div>
                 <div className="flex items-center gap-1 mt-2">
@@ -149,7 +190,7 @@ const SingleUsersPage = () => {
             </div>
 
             <p className="text-sm font-medium text-muted-foreground text-justify">
-              Hi, Good morning
+              -
             </p>
           </div>
           {/* User Card Container */}
@@ -158,14 +199,6 @@ const SingleUsersPage = () => {
           <div className="bg-primary-foreground p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-semibold">User Information</h1>
-
-              {/* <Sheet>
-                <SheetTrigger asChild>
-                  <Button>Edit User</Button>
-                </SheetTrigger>
-
-                <EditUser />
-              </Sheet> */}
             </div>
 
             <div className="space-y-4 mt-4">
@@ -178,32 +211,32 @@ const SingleUsersPage = () => {
 
               <div className="flex items-center gap-2">
                 <span className="font-bold">Full Name:</span>
-                <span>Bayu Nugroho</span>
+                <span>{profile.full_name || "-"}</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="font-bold">Email:</span>
-                <span>bayu@gmail.com</span>
+                <span>-</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="font-bold">Phone:</span>
-                <span>+70 1689 190142</span>
+                <span>-</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="font-bold">Address:</span>
-                <span>Stockholm, SE</span>
+                <span>-</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="font-bold">City:</span>
-                <span>Stockholm</span>
+                <span>-</span>
               </div>
             </div>
 
             <p className="text-sm text-muted-foreground mt-4">
-              joined on 2025.01.01
+              joined on {new Date(profile.updated_at || "").toLocaleDateString()}
             </p>
           </div>
           {/* Information Container */}
@@ -221,7 +254,7 @@ const SingleUsersPage = () => {
           {/* Table Container */}
           <div className="bg-primary-foreground p-4 rounded-lg">
             <h1 className="text-xl font-semibold">Bids</h1>
-            <UserBids />
+            <UserBids bids={bids} />
           </div>
           {/* Table Container */}
         </div>
