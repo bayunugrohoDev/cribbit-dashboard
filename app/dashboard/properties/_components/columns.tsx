@@ -170,6 +170,8 @@ export const columns: ColumnDef<Properties>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
+            // TODO
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               //@ts-expect-error
               onSelect={() => table.options.meta?.openModal(property)}
             >

@@ -22,17 +22,14 @@ export async function fetchUsers() {
   return data;
 }
 
-export async function fetchProfileById(userId: string) {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
+export async function fetchUserWithAuthById(userId: string) {
+  const users = await fetchUsers();
+  // TODO: change the any
+  const user = users.find((u: any) => u.id === userId);
 
-  if (error) {
-    throw error;
+  if (!user) {
+    throw new Error("User not found");
   }
 
-  return data;
+  return user;
 }

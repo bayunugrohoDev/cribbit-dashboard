@@ -55,6 +55,7 @@ export async function GET() {
       // console.log('location:', location);
       return {
         id: bid.id,
+        userId: bid.user_id,
         userName: user?.full_name || "Unknown User",
         userAvatar: user?.avatar_url || "",
         locations: {

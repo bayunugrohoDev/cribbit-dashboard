@@ -157,6 +157,7 @@ export const columns: ColumnDef<Bid>[] = [
             {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
             <DropdownMenuItem
               // TODO :
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               //@ts-expect-error
               onSelect={() => table.options.meta?.openModal(bid)}
             >
@@ -178,7 +179,7 @@ export const columns: ColumnDef<Bid>[] = [
             </DropdownMenuItem>
             {/* <DropdownMenuItem>View bid details</DropdownMenuItem> */}
             <DropdownMenuItem>
-              <Link href={`/dashboard/users/${bid.id}`} className="text-black">
+              <Link href={`/dashboard/users/${bid.userId}`} className="text-black">
                 View user details
               </Link>
             </DropdownMenuItem>

@@ -4,6 +4,7 @@ import { z } from "zod";
 // IRL, you will have a more complex schema with relations between users, properties, etc.
 export const bidSchema = z.object({
   id: z.string(),
+  userId: z.string(),
   userName: z.string(),
   userAvatar: z.string().optional(),
   locations: z.object({

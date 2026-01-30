@@ -17,7 +17,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 
 import { fetchBidsByUserId } from "@/lib/api/bids";
-import { fetchProfileById } from "@/lib/api/users";
+import { fetchUserWithAuthById } from "@/lib/api/users";
 import { useQuery } from "@tanstack/react-query";
 import {
   BadgeCheck,
@@ -35,12 +35,12 @@ const SingleUsersPage = () => {
   const params = useParams<{ id: string }>();
 
   const {
-    data: profile,
-    isLoading: isProfileLoading,
-    isError: isProfileError,
+    data: user,
+    isLoading: isUserLoading,
+    isError: isUserError,
   } = useQuery({
-    queryKey: ["profile", params.id],
-    queryFn: () => fetchProfileById(params.id),
+    queryKey: ["user", params.id],
+    queryFn: () => fetchUserWithAuthById(params.id),
     enabled: !!params.id,
   });
 
@@ -54,15 +54,15 @@ const SingleUsersPage = () => {
     enabled: !!params.id,
   });
 
-  if (isProfileLoading || isBidsLoading) {
+  if (isUserLoading || isBidsLoading) {
     return <LoadingSkeleton />;
   }
 
-  if (isProfileError || isBidsError) {
+  if (isUserError || isBidsError) {
     return <div>Error loading data</div>;
   }
 
-  if (!profile) {
+  if (!user) {
     return <div>User not found</div>;
   }
 
@@ -83,7 +83,7 @@ const SingleUsersPage = () => {
           <BreadcrumbSeparator />
 
           <BreadcrumbItem>
-            <BreadcrumbPage>{profile.full_name || "-"}</BreadcrumbPage>
+            <BreadcrumbPage>{user.full_name || "-"}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -169,16 +169,16 @@ const SingleUsersPage = () => {
               <div>
                 <Avatar className="size-12">
                   <AvatarImage
-                    src={profile.avatar_url || ""}
+                    src={user.avatar_url || ""}
                     alt="user-icon"
                   />
                   <AvatarFallback>
-                    {profile.full_name?.charAt(0).toUpperCase() || "U"}
+                    {user.full_name?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
 
                 <h1 className="text-xl font-semibold">
-                  {profile.full_name || "-"}
+                  {user.full_name || "-"}
                 </h1>
               </div>
               <div>
@@ -211,12 +211,12 @@ const SingleUsersPage = () => {
 
               <div className="flex items-center gap-2">
                 <span className="font-bold">Full Name:</span>
-                <span>{profile.full_name || "-"}</span>
+                <span>{user.full_name || "-"}</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="font-bold">Email:</span>
-                <span>-</span>
+                <span>{user.email || "-"}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -236,7 +236,7 @@ const SingleUsersPage = () => {
             </div>
 
             <p className="text-sm text-muted-foreground mt-4">
-              joined on {new Date(profile.updated_at || "").toLocaleDateString()}
+              joined on {new Date(user.registered_at || "").toLocaleDateString()}
             </p>
           </div>
           {/* Information Container */}

@@ -13,6 +13,17 @@ export const fetchBids = async () => {
   return z.array(bidSchema).parse(data);
 };
 
+export const fetchAllBidsFromDatabase = async () => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from("bids").select("*");
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
 export const fetchBidsByLocationId = async (locationId: string) => {
   const supabase = createClient();
   const { data: bids, error: bidsError } = await supabase

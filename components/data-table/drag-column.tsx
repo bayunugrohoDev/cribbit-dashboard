@@ -25,6 +25,8 @@ function DragHandle({ id }: { id: number }) {
   );
 }
 
+// TODO: fix any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const dragColumn: ColumnDef<any> = {
   id: "drag",
   header: () => null,

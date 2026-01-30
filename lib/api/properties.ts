@@ -1,19 +1,25 @@
 import { propertySchemaDetail } from "@/app/dashboard/properties/[propertyId]/_components/schema";
-import { propertySchema } from "@/app/dashboard/properties/_components/schema";
+import { propertySchema, Properties } from "@/app/dashboard/properties/_components/schema";
 import { z } from "zod";
+import { createClient } from "../supabase/client";
 
 export const fetchProperties = async () => {
-  const response = await fetch("/api/bids");
-
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-
-  const data = properties
-  
+  const data = properties;
   return z.array(propertySchema).parse(data);
 };
-export const properties = [
+
+export const fetchLocations = async () => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from("locations").select("*");
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+export const properties: Properties[] = [
     {
       id: "PROP-001",
       title: "Luxury Villa Stockholm",
@@ -35,8 +41,8 @@ export const properties = [
       route: "Björkvägen",
       streetNumber: "5",
       postal_town: "Göteborg",
-      owner: "-", // Belum ada pemilik terdaftar
-      agent: "-", // Belum ada agen ditugaskan
+      owner: "Unknown Owner", // Belum ada pemilik terdaftar
+      agent: undefined, // Belum ada agen ditugaskan, changed from "-" to undefined
       source: "User Post",
       status: "Requested", // Kondisi: User ngebid di map, butuh agen untuk follow up
       listingPrice: 0,
@@ -80,7 +86,7 @@ export const properties = [
       route: "Kungsgatan",
       streetNumber: "7",
       postal_town: "Linköping",
-      owner: "-",
+      owner: "Unknown Owner",
       agent: "Sarah Agent", // Kondisi: Requested yang sudah mulai diproses oleh agen
       source: "User Post",
       status: "Requested",

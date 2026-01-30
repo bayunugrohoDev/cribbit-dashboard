@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchUsers } from "@/lib/api/users";
 import { columns } from "./columns";
-import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 
