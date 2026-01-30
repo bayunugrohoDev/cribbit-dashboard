@@ -22,7 +22,6 @@ export const fetchLocations = async () => {
 export const properties: Properties[] = [
     {
       id: "PROP-001",
-      title: "Luxury Villa Stockholm",
       route: "Elmegatan",
       streetNumber: "12A",
       postal_town: "Stockholm",
@@ -37,7 +36,6 @@ export const properties: Properties[] = [
     },
     {
       id: "PROP-002",
-      title: "Potensial Lot - Björkvägen",
       route: "Björkvägen",
       streetNumber: "5",
       postal_town: "Göteborg",
@@ -52,7 +50,6 @@ export const properties: Properties[] = [
     },
     {
       id: "PROP-003",
-      title: "Modern Apartment Malmö",
       route: "Vasagatan",
       streetNumber: "3",
       postal_town: "Malmö",
@@ -67,7 +64,6 @@ export const properties: Properties[] = [
     },
     {
       id: "PROP-004",
-      title: "Vintage House Uppsala",
       route: "Storgatan",
       streetNumber: "10",
       postal_town: "Uppsala",
@@ -82,7 +78,6 @@ export const properties: Properties[] = [
     },
     {
       id: "PROP-005",
-      title: "Hot Spot - Kungsgatan",
       route: "Kungsgatan",
       streetNumber: "7",
       postal_town: "Linköping",

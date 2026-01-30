@@ -254,7 +254,7 @@ const SingleUsersPage = () => {
           {/* Table Container */}
           <div className="bg-primary-foreground p-4 rounded-lg">
             <h1 className="text-xl font-semibold">Bids</h1>
-            <UserBids bids={bids} />
+            <UserBids bids={bids ? bids : []} />
           </div>
           {/* Table Container */}
         </div>

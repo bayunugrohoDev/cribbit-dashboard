@@ -135,7 +135,7 @@ export default function PropertyDetailPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <UserBids bids={bids} currentUser={user} />
+          <UserBids bids={bids ?? null} currentUser={user ?? null} />
         </CardContent>
       </Card>
     </div>
