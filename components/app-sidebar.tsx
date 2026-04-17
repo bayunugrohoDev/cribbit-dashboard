@@ -20,7 +20,7 @@ import {
   IconSettings,
   IconTable,
   IconUsers,
-  IconHome
+  IconHome,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
@@ -62,14 +62,14 @@ const data = {
       icon: IconHome,
     },
     {
-      title: "Agents (wip)",
-      url: "#",
+      title: "Agents",
+      url: "/dashboard/agents",
       icon: IconUsers,
     },
     {
-      title: "Owners (wip)",
-      url: "#",
-      icon:  IconHome,
+      title: "Owners",
+      url: "/dashboard/owners",
+      icon: IconHome,
     },
   ],
   // navClouds: [
@@ -103,22 +103,22 @@ const data = {
   //         url: "#",
   //       },
   //     ],
-    //   },
-    //   {
-    //     title: "Prompts",
-    //     icon: IconFileAi,
-    //     url: "#",
-    //     items: [
-    //       {
-    //         title: "Active Proposals",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Archived",
-    //         url: "#",
-    //       },
-    //     ],
-    //   },
+  //   },
+  //   {
+  //     title: "Prompts",
+  //     icon: IconFileAi,
+  //     url: "#",
+  //     items: [
+  //       {
+  //         title: "Active Proposals",
+  //         url: "#",
+  //       },
+  //       {
+  //         title: "Archived",
+  //         url: "#",
+  //       },
+  //     ],
+  //   },
   // ],
   navSecondary: [
     {
@@ -156,7 +156,10 @@ const data = {
   // ],
 };
 
-export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sidebar> & {
+export function AppSidebar({
+  user,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
   user: {
     name: string;
     email?: string;
@@ -180,9 +183,7 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
                   width={32}
                   height={32}
                 />
-                <span className="text-xl font-bold">
-                  Cribbit Dashboard
-                </span>
+                <span className="text-xl font-bold">Cribbit Dashboard</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -199,4 +200,3 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
     </Sidebar>
   );
 }
-

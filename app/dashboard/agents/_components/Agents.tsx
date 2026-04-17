@@ -1,39 +1,35 @@
 "use client";
 
-import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
+import { fetchAgents } from "@/lib/api/agents";
+import { columns } from "./columns";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+
 import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-
-import { columns } from "./columns";
-import { DataTable } from "@/components/data-table/data-table";
-import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
-import { fetchProperties } from "@/lib/api/properties";
 
-export default function Properties() {
+export default function Agents() {
   const {
-    data: properties = [],
+    data: agents = [],
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["properties"],
-    queryFn: fetchProperties,
+    queryKey: ["agents"],
+    queryFn: fetchAgents,
   });
 
   const table = useReactTable({
-    data: properties,
+    data: agents,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      sorting: [{ id: "date", desc: true }],
-    },
   });
 
   if (isLoading) {
@@ -42,9 +38,7 @@ export default function Properties() {
 
   if (isError) {
     return (
-      <div className="text-red-500 px-4 lg:px-6">
-        Error fetching properties. Please try again later 2
-      </div>
+      <div className="text-red-500 px-4 lg:px-6">Error fetching agents.</div>
     );
   }
 

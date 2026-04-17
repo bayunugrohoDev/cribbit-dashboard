@@ -2,38 +2,35 @@
 
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
+import { fetchOwners } from "@/lib/api/owners";
+import { columns } from "./owner-group-columns";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+
 import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-
-import { columns } from "./columns";
-import { DataTable } from "@/components/data-table/data-table";
-import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
-import { fetchProperties } from "@/lib/api/properties";
 
-export default function Properties() {
+export default function Owners() {
   const {
-    data: properties = [],
+    data: owners = [],
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["properties"],
-    queryFn: fetchProperties,
+    queryKey: ["owners"],
+    queryFn: fetchOwners,
   });
 
   const table = useReactTable({
-    data: properties,
+    data: owners,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      sorting: [{ id: "date", desc: true }],
-    },
   });
 
   if (isLoading) {
@@ -42,9 +39,7 @@ export default function Properties() {
 
   if (isError) {
     return (
-      <div className="text-red-500 px-4 lg:px-6">
-        Error fetching properties. Please try again later 2
-      </div>
+      <div className="text-red-500 px-4 lg:px-6">Error fetching owners.</div>
     );
   }
 
