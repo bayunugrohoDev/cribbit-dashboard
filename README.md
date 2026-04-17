@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cribbit Mobile
 
-## Getting Started
+A guide to setting up and running this React Native (Expo) project.
 
-First, run the development server:
+## Project Setup
+
+1.  **Install Dependencies**:
+    Ensure you have Node.js and npm installed. From the project's root directory, run:
+
+    ```bash
+    npm install
+    ```
+
+2.  **Environment Configuration (Supabase)**:
+    This application can connect to different Supabase environments (local for development and cloud for production).
+    - **`.env.local`**: Use this file for your **local** Supabase credentials. The Supabase CLI provides these when you run `supabase start`. Make sure to fill in the placeholder values.
+    - **`.env.cloud`**: This file stores the credentials for the **cloud** (production) Supabase instance.
+
+    To switch between these environments, use the following npm scripts:
+    - **To use the LOCAL configuration**:
+      This command copies the contents of `.env.local` into the active `.env` file.
+
+      ```bash
+      npm run use:local
+      ```
+
+    - **To use the CLOUD configuration**:
+      This command copies `.env.cloud` into `.env`.
+      ```bash
+      npm run use:cloud
+      ```
+
+    **Important**: After switching environments, you may need to restart the Metro server (`npm start`) for the changes to take effect.
+
+3.  **Running the Application**:
+    Once your environment is configured, run the app on your desired platform:
+
+    ```bash
+    # Start the Metro development server
+    npm start
+
+    # Run on an iOS simulator (after starting the server)
+    npm run ios
+
+    # Run on an Android emulator (after starting the server)
+    npm run android
+    ```
+
+## Notes
+
+### iOS Deployment (TestFlight)
+
+- Create a new build.
+- In Xcode, navigate to the "Product" tab and select "Archive".
+- Follow the "Distribute App" process to upload to TestFlight.
+
+### Sign in with Apple / Google
+
+- Setup steps for these providers need to be configured in the Apple Developer account and Google Cloud Console, respectively, and then added to the Supabase Auth providers.
+
+<details>
+<summary>Supabase Local Development Output</summary>
+
+This information is generated when you run `supabase start` locally. It is provided here for reference.
+
+#### Development Tools
+
+| Tool    | URL                        |
+| ------- | -------------------------- |
+| Studio  | http://127.0.0.1:54323     |
+| Mailpit | http://127.0.0.1:54324     |
+| MCP     | http://127.0.0.1:54321/mcp |
+
+#### APIs
+
+| API            | URL                                 |
+| -------------- | ----------------------------------- |
+| Project URL    | http://127.0.0.1:54321              |
+| REST           | http://127.0.0.1:54321/rest/v1      |
+| GraphQL        | http://127.0.0.1:54321/graphql/v1   |
+| Edge Functions | http://127.0.0.1:54321/functions/v1 |
+
+#### Database
+
+| Name | URL                                                     |
+| ---- | ------------------------------------------------------- |
+| URL  | postgresql://postgres:postgres@127.0.0.1:54322/postgres |
+
+#### Authentication Keys
+
+| Type          | Key                                                 |
+| ------------- | --------------------------------------------------- |
+| Anon / Public | sb*publishable*... (get this from `supabase start`) |
+| Secret        | sb*secret*... (get this from `supabase start`)      |
+
+</details>
+
+---
+
+## TODO
+
+- [ ] Clean up code once the final design/flow is available.
+- [ ] Remove unused code and database tables.
+
+## Database Management
+
+### Dump Cloud DB to Local
+
+To back up data from the cloud database and apply it locally:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+supabase db dump --data-only > supabase/backup/data.sql
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This command dumps only the data into a SQL file. You can then import this into your local database.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## how to create migration file
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+supabase migration new
 
-## Learn More
+## HOW TO run on local
 
-To learn more about Next.js, take a look at the following resources:
+supabase migration up
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## run on production / cloud
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+supabase db push

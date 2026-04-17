@@ -13,6 +13,7 @@ import {
   getPaginationRowModel,
 } from "@tanstack/react-table";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
+import { CreateAgentSheet } from "./create-agent-sheet";
 
 export default function Agents() {
   const {
@@ -43,7 +44,11 @@ export default function Agents() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold tracking-tight">Agents Directory</h2>
+        <CreateAgentSheet />
+      </div>
       <div className="rounded-lg border overflow-hidden">
         <DataTable table={table} columns={columns} />
       </div>
