@@ -16,7 +16,7 @@ export default function Page() {
       {/* <DataTable data={data} /> */}
       <div className="flex w-full min-h-screen  justify-center items-center">
         <h2 className="text-2xl font-semibold">
-          Wellcome to Cribbit Dashboard 2
+          Wellcome to Cribbit Dashboard
         </h2>
       </div>
     </>

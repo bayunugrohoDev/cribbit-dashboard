@@ -86,11 +86,8 @@ export async function createAgentAccount(formData: FormData) {
   // Step 2b: Create the broker entry safely linked to the real Auth User ID!
   const newBrokerData = {
     id: userId,
-    full_name: fullName,
-    email: email,
-    phone: phone,
-    company_name: companyName,
-    region: region,
+    region: region || "Unknown",
+    company_name: companyName || "Independent Broker",
   };
 
   const { error: insertError } = await adminClient
