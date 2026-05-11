@@ -34,7 +34,7 @@ export default function LandingPage() {
             <div className="text-3xl font-['Noto_Serif',serif] font-bold text-[#BC5B1D]">
               Cribbit
             </div>
-            <div className="hidden md:flex items-center gap-8">
+            {/* <div className="hidden md:flex items-center gap-8">
               <a
                 className="text-[#1a1d14]/60 hover:text-[#1a1d14] transition-colors font-['Inter',sans-serif]"
                 href="#"
@@ -53,7 +53,7 @@ export default function LandingPage() {
               >
                 Atelier
               </a>
-            </div>
+            </div> */}
             <div className="flex items-center gap-4">
               {/* <Link
                 href="/login"

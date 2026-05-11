@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export async function createAgentAccount(formData: FormData) {
   const supabase = await createClient();
@@ -112,4 +113,32 @@ export async function createAgentAccount(formData: FormData) {
     success: true,
     message: "Agent created successfully and invite email sent.",
   };
+}
+
+export async function demoteAgent(brokerId: string, email: string, newStatus: 'pending' | 'rejected') {
+  const { createAdminClient } = await import("@/lib/supabase/admin");
+  const adminClient = createAdminClient();
+
+  // 1. Delete from Brokers table (Revokes Access)
+  const { error: deleteError } = await adminClient
+    .from("brokers")
+    .delete()
+    .eq("id", brokerId);
+
+  if (deleteError) {
+    return { success: false, message: `Failed to remove broker access: ${deleteError.message}` };
+  }
+
+  // 2. Try to update their prior broker_applications status to pending or rejected
+  const { error: appError } = await adminClient
+    .from("broker_applications")
+    .update({ status: newStatus })
+    .eq("email", email);
+
+  // Note: We don't fail the demote if appError exists (they might have been created manually without an app)
+  
+  revalidatePath("/dashboard/agents");
+  revalidatePath("/dashboard/applications");
+
+  return { success: true, message: `Agent successfully moved to ${newStatus}.` };
 }

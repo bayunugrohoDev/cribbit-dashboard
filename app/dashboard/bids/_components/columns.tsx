@@ -58,14 +58,17 @@ export const columns: ColumnDef<Bid>[] = [
   {
     id: "address",
     accessorFn: (row) =>
-      `${row.locations.route} ${row.locations.streetNumber}, ${row.locations.postal_town}`,
+      `${row.locations.route ?? ""} ${row.locations.streetNumber ?? ""}, ${row.locations.postal_town ?? ""}`,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Address" />
     ),
     cell: ({ row }) => {
       const { route, streetNumber, postal_town } = row.original.locations;
+      const address = `${route ?? ""} ${streetNumber ?? ""}, ${postal_town ?? ""}`.trim();
       return (
-        <div className="text-sm text-muted-foreground">{`${route} ${streetNumber}, ${postal_town}`}</div>
+        <div className="text-sm text-muted-foreground">
+          {address === "," ? "No address" : address}
+        </div>
       );
     },
   },
@@ -169,9 +172,13 @@ export const columns: ColumnDef<Bid>[] = [
             >
               Copy bid ID
             </DropdownMenuItem> */}
-            <DropdownMenuItem>
+            <DropdownMenuItem disabled={!bid.locations.location_id}>
               <Link
-                href={`/dashboard/properties/${bid.locations.location_id}`}
+                href={
+                  bid.locations.location_id
+                    ? `/dashboard/properties/${bid.locations.location_id}`
+                    : "#"
+                }
                 className="text-black"
               >
                 View property details

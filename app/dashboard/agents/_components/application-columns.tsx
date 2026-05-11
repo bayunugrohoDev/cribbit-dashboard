@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { useState } from "react";
 
@@ -41,12 +42,16 @@ export type BrokerApplicationSchema = {
 function ApplicationActions({ app }: { app: BrokerApplicationSchema }) {
   const queryClient = useQueryClient();
   const [isBioOpen, setIsBioOpen] = useState(false);
+  const [isApproveOpen, setIsApproveOpen] = useState(false);
+  const [approvalPassword, setApprovalPassword] = useState("");
 
   const approveMutation = useMutation({
-    mutationFn: (id: string) => approveApplication(id),
+    mutationFn: (args: { id: string, initialPassword?: string }) => approveApplication(args.id, args.initialPassword),
     onSuccess: (result) => {
       if (result.success) {
         toast.success(result.message);
+        setIsApproveOpen(false);
+        setApprovalPassword("");
         queryClient.invalidateQueries({ queryKey: ["broker_applications", "pending"] });
         queryClient.invalidateQueries({ queryKey: ["broker_applications", "rejected"] });
         queryClient.invalidateQueries({ queryKey: ["agents"] });
@@ -98,6 +103,47 @@ function ApplicationActions({ app }: { app: BrokerApplicationSchema }) {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={isApproveOpen} onOpenChange={setIsApproveOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Approve Agent & Set Password</DialogTitle>
+            <DialogDescription>
+              Set an initial temporary password for {app.full_name}. This will be securely emailed to them immediately.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700 block">Temporary Password</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={approvalPassword}
+                  onChange={(e) => setApprovalPassword(e.target.value)}
+                  className="flex-1 px-4 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g. Cribbit2026!"
+                />
+                <Button 
+                  type="button" 
+                  variant="secondary" 
+                  onClick={() => setApprovalPassword("Cr!b" + Math.random().toString(36).slice(-6) + "99")}
+                >
+                  Generate
+                </Button>
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setIsApproveOpen(false)}>Cancel</Button>
+            <Button 
+              disabled={!approvalPassword || approveMutation.isPending} 
+              onClick={() => approveMutation.mutate({ id: app.id, initialPassword: approvalPassword })}
+            >
+              {approveMutation.isPending ? "Approving..." : "Approve & Send Email"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="flex size-8 p-0" size="icon">
@@ -114,10 +160,10 @@ function ApplicationActions({ app }: { app: BrokerApplicationSchema }) {
               <DropdownMenuSeparator />
               <DropdownMenuItem 
                 className="text-green-600 focus:text-green-600 focus:bg-green-50"
-                onClick={() => approveMutation.mutate(app.id)}
+                onClick={() => setIsApproveOpen(true)}
                 disabled={approveMutation.isPending || rejectMutation.isPending}
               >
-                Approve
+                Approve & Set Password
               </DropdownMenuItem>
               <DropdownMenuItem 
                 className="text-red-600 focus:text-red-600 focus:bg-red-50"

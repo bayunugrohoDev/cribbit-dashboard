@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { sendAgentWelcomeEmail } from "@/lib/email";
 
 export async function submitApplication(formData: FormData) {
   const supabase = await createClient();
@@ -74,7 +75,7 @@ export async function submitApplication(formData: FormData) {
   };
 }
 
-export async function approveApplication(applicationId: string) {
+export async function approveApplication(applicationId: string, initialPassword?: string) {
   const supabase = await createClient();
   const { createAdminClient } = await import("@/lib/supabase/admin");
   const adminClient = createAdminClient();
@@ -100,22 +101,35 @@ export async function approveApplication(applicationId: string) {
   let userId = existingProfile?.id;
 
   if (!userId) {
-    // Skenario 1: New User. Invite them via Admin Auth API
-    const { data: inviteData, error: authError } = await adminClient.auth.admin.inviteUserByEmail(
-      app.email,
-      {
-        data: { role: 'agent', is_upgraded: true, full_name: app.full_name },
-        redirectTo: 'https://cribbit-dashboard-shadcn.vercel.app'
-      }
-    );
+    if (!initialPassword) {
+      return { success: false, message: "Initial password is required to approve a new agent." };
+    }
 
-    if (authError || !inviteData.user) {
+    // Skenario 1: New User. Create via Admin Auth API directly with password
+    const { data: userData, error: authError } = await adminClient.auth.admin.createUser({
+      email: app.email,
+      password: initialPassword,
+      email_confirm: true,
+      user_metadata: { role: 'agent', is_upgraded: true, full_name: app.full_name },
+    });
+
+    if (authError || !userData.user) {
       return { success: false, message: `Auth creation failed: ${authError?.message}` };
     }
-    userId = inviteData.user.id;
+    userId = userData.user.id;
     
     // Ensure profile exists. We only know id and full_name are valid for sure
     await adminClient.from("profiles").upsert({ id: userId, full_name: app.full_name });
+
+    // Send Welcome Email natively through Nodemailer
+    try {
+      await sendAgentWelcomeEmail(app.email, app.full_name, initialPassword);
+    } catch (emailError: any) {
+      console.error("Nodemailer Error:", emailError);
+      // We don't rollback the user creation here, but we log it.
+      // You could optionally rollback or queue retrries in a production environment.
+    }
+
   } else {
     // Skenario 2: Existing User. Update their profile.
     await adminClient.auth.admin.updateUserById(userId, { user_metadata: { role: 'agent', is_upgraded: true } });
