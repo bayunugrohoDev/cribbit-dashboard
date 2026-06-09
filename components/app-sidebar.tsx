@@ -21,6 +21,7 @@ import {
   IconTable,
   IconUsers,
   IconHome,
+  IconMail,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
@@ -70,6 +71,11 @@ const data = {
       title: "Owners",
       url: "/dashboard/owners",
       icon: IconHome,
+    },
+    {
+      title: "Postcards",
+      url: "/dashboard/postcards",
+      icon: IconMail,
     },
   ],
   // navClouds: [

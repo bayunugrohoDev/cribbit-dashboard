@@ -146,27 +146,75 @@ export type Database = {
           },
         ]
       }
+      broker_applications: {
+        Row: {
+          bio: string | null
+          company_name: string | null
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          license_number: string | null
+          phone: string | null
+          status: string
+        }
+        Insert: {
+          bio?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          license_number?: string | null
+          phone?: string | null
+          status?: string
+        }
+        Update: {
+          bio?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          license_number?: string | null
+          phone?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       brokers: {
         Row: {
           action_text: string | null
           company_name: string
           created_at: string
+          email: string | null
+          full_name: string | null
           id: string
+          phone: string | null
           region: string | null
+          status: string | null
         }
         Insert: {
           action_text?: string | null
           company_name: string
           created_at?: string
+          email?: string | null
+          full_name?: string | null
           id: string
+          phone?: string | null
           region?: string | null
+          status?: string | null
         }
         Update: {
           action_text?: string | null
           company_name?: string
           created_at?: string
+          email?: string | null
+          full_name?: string | null
           id?: string
+          phone?: string | null
           region?: string | null
+          status?: string | null
         }
         Relationships: [
           {
@@ -219,20 +267,31 @@ export type Database = {
           id: string
           last_message: string | null
           last_message_at: string | null
+          location_id: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
           last_message?: string | null
           last_message_at?: string | null
+          location_id?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
           last_message?: string | null
           last_message_at?: string | null
+          location_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chats_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       location_claims: {
         Row: {
@@ -392,6 +451,91 @@ export type Database = {
           },
         ]
       }
+      postcard_orders: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          bid_id: string | null
+          created_at: string
+          currency: string
+          id: string
+          location_id: string
+          paid_at: string | null
+          price_max: number
+          price_min: number
+          qr_token: string | null
+          sent_at: string | null
+          status: Database["public"]["Enums"]["postcard_order_status"]
+          stripe_charge_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          user_id: string
+          watch_id: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          amount?: number
+          bid_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          location_id: string
+          paid_at?: string | null
+          price_max: number
+          price_min: number
+          qr_token?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["postcard_order_status"]
+          stripe_charge_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_id: string
+          watch_id?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          bid_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          location_id?: string
+          paid_at?: string | null
+          price_max?: number
+          price_min?: number
+          qr_token?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["postcard_order_status"]
+          stripe_charge_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_id?: string
+          watch_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "postcard_orders_bid_id_fkey"
+            columns: ["bid_id"]
+            isOneToOne: false
+            referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "postcard_orders_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "postcard_orders_watch_id_fkey"
+            columns: ["watch_id"]
+            isOneToOne: false
+            referencedRelation: "watches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -458,6 +602,51 @@ export type Database = {
         }
         Relationships: []
       }
+      push_notification_events: {
+        Row: {
+          actor_user_id: string | null
+          attempts: number
+          body: string
+          created_at: string
+          data: Json
+          id: string
+          last_error: string | null
+          processed_at: string | null
+          recipient_user_id: string
+          status: string
+          title: string
+          type: string
+        }
+        Insert: {
+          actor_user_id?: string | null
+          attempts?: number
+          body: string
+          created_at?: string
+          data?: Json
+          id?: string
+          last_error?: string | null
+          processed_at?: string | null
+          recipient_user_id: string
+          status?: string
+          title: string
+          type: string
+        }
+        Update: {
+          actor_user_id?: string | null
+          attempts?: number
+          body?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          last_error?: string | null
+          processed_at?: string | null
+          recipient_user_id?: string
+          status?: string
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
       user_homes: {
         Row: {
           address: string | null
@@ -498,6 +687,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_push_tokens: {
+        Row: {
+          created_at: string
+          device_id: string | null
+          device_name: string | null
+          expo_push_token: string
+          id: string
+          is_active: boolean
+          platform: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_id?: string | null
+          device_name?: string | null
+          expo_push_token: string
+          id?: string
+          is_active?: boolean
+          platform?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string | null
+          device_name?: string | null
+          expo_push_token?: string
+          id?: string
+          is_active?: boolean
+          platform?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       watches: {
         Row: {
@@ -573,13 +798,18 @@ export type Database = {
       }
       cleanup_expired_bankid_sessions: { Args: never; Returns: undefined }
       create_chat_with_participant: {
-        Args: { other_user_id: string }
+        Args: { other_user_id: string; p_location_id: string }
         Returns: string
       }
       create_chat_with_participants: {
         Args: { p_other_user_ids: string[] }
         Returns: string
       }
+      deactivate_current_push_token: {
+        Args: { p_device_id: string }
+        Returns: undefined
+      }
+      delete_user_account: { Args: never; Returns: undefined }
       get_chat_messages: {
         Args: { p_chat_id: string }
         Returns: {
@@ -611,7 +841,7 @@ export type Database = {
         }[]
       }
       get_common_chat_id: {
-        Args: { user_id_1: string; user_id_2: string }
+        Args: { p_location_id: string; user_id_1: string; user_id_2: string }
         Returns: {
           chat_id: string
         }[]
@@ -622,7 +852,11 @@ export type Database = {
           chat_id: string
           last_message: string
           last_message_at: string
+          location_id: string
           participants: Json
+          rooms: number
+          street: string
+          street_number: string
           unread_count: number
         }[]
       }
@@ -645,11 +879,28 @@ export type Database = {
         Args: { p_chat_id: string; p_sender_id: string }
         Returns: undefined
       }
+      push_location_label: { Args: { p_location_id: string }; Returns: string }
+      push_profile_name: { Args: { p_user_id: string }; Returns: string }
+      register_user_push_token: {
+        Args: {
+          p_device_id?: string
+          p_device_name?: string
+          p_expo_push_token: string
+          p_platform?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "user" | "admin" | "super_admin"
       contact_method_enum: "broker" | "direct_post" | "owner_chat"
       login_provider: "bankid" | "google" | "apple" | "email" | "guest"
+      postcard_order_status:
+        | "pending"
+        | "paid"
+        | "sent"
+        | "failed"
+        | "cancelled"
       property_type_enum: "House" | "Apartment" | "Land"
     }
     CompositeTypes: {
@@ -781,6 +1032,7 @@ export const Constants = {
       app_role: ["user", "admin", "super_admin"],
       contact_method_enum: ["broker", "direct_post", "owner_chat"],
       login_provider: ["bankid", "google", "apple", "email", "guest"],
+      postcard_order_status: ["pending", "paid", "sent", "failed", "cancelled"],
       property_type_enum: ["House", "Apartment", "Land"],
     },
   },
