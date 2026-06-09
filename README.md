@@ -104,24 +104,15 @@ This information is generated when you run `supabase start` locally. It is provi
 
 ## Database Management
 
-### Dump Cloud DB to Local
+> [!WARNING]
+> **MIGRATION SINGLE SOURCE OF TRUTH**: 
+> Database migrations **MUST NOT** be created or pushed from this dashboard project repository (`cribbit-dashboard-shadcn`).
+> All database schema migrations are managed solely inside the **Cribbit Mobile** (`cribbit-mobile`) repository to prevent version history conflicts.
+>
+> If you make changes to the database structure:
+> 1. Create and push the migration SQL file from the `cribbit-mobile` project using the Supabase CLI.
+> 2. Regenerate the TypeScript schema definitions in this project by running:
+>    ```bash
+>    npm run generate:db
+>    ```
 
-To back up data from the cloud database and apply it locally:
-
-```bash
-supabase db dump --data-only > supabase/backup/data.sql
-```
-
-This command dumps only the data into a SQL file. You can then import this into your local database.
-
-## how to create migration file
-
-supabase migration new
-
-## HOW TO run on local
-
-supabase migration up
-
-## run on production / cloud
-
-supabase db push
