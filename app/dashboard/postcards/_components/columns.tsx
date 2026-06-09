@@ -97,7 +97,7 @@ export const columns: ColumnDef<PostcardOrder>[] = [
         style: "currency",
         currency: order.currency || "SEK",
         minimumFractionDigits: 0,
-      }).format(order.amount);
+      }).format(order.amount / 100);
 
       if (order.stripePaymentIntentId) {
         return (
