@@ -184,11 +184,18 @@ export default function SettingsPage() {
         {/* Tab 2: Stripe Integration */}
         <TabsContent value="stripe">
           <Card>
-            <CardHeader>
-              <CardTitle>Stripe Credentials</CardTitle>
-              <CardDescription>
-                Configure Stripe API keys and Webhook secret. Secrets are hidden for security.
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+              <div className="space-y-1.5">
+                <CardTitle>Stripe Credentials</CardTitle>
+                <CardDescription>
+                  Configure Stripe API keys and Webhook secret. Secrets are hidden for security.
+                </CardDescription>
+              </div>
+              <Button variant="outline" size="sm" asChild>
+                <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener noreferrer">
+                  Stripe Dashboard
+                </a>
+              </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -215,7 +222,12 @@ export default function SettingsPage() {
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="stripe_webhook_secret">Stripe Webhook Secret</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="stripe_webhook_secret">Stripe Webhook Secret</Label>
+                  <a href="https://dashboard.stripe.com/webhooks" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">
+                    Manage Webhooks
+                  </a>
+                </div>
                 <Input
                   id="stripe_webhook_secret"
                   type="text"
@@ -239,11 +251,18 @@ export default function SettingsPage() {
         {/* Tab 3: Email Settings */}
         <TabsContent value="email">
           <Card>
-            <CardHeader>
-              <CardTitle>Resend Email Credentials & Addresses</CardTitle>
-              <CardDescription>
-                Configure the Resend API key and email routing.
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+              <div className="space-y-1.5">
+                <CardTitle>Resend Email Credentials & Addresses</CardTitle>
+                <CardDescription>
+                  Configure the Resend API key and email routing.
+                </CardDescription>
+              </div>
+              <Button variant="outline" size="sm" asChild>
+                <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer">
+                  Resend Console
+                </a>
+              </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -257,7 +276,12 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="postcard_email_from">From Email Address</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="postcard_email_from">From Email Address</Label>
+                  <a href="https://resend.com/domains" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">
+                    Verify Domain
+                  </a>
+                </div>
                 <Input
                   id="postcard_email_from"
                   type="text"
