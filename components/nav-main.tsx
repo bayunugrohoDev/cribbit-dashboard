@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPostcards } from "@/lib/api/postcards";
 
 export function NavMain({
   items,
@@ -24,7 +26,12 @@ export function NavMain({
 }) {
   const pathname = usePathname();
 
-  console.log("pathname", pathname);
+  const { data: postcards } = useQuery({
+    queryKey: ["postcards"],
+    queryFn: fetchPostcards,
+  });
+
+  const hasUnreadPostcards = postcards?.some((p) => p.unreadCount && p.unreadCount > 0);
 
   return (
     <SidebarGroup>
@@ -57,7 +64,14 @@ export function NavMain({
                 isActive={pathname === item.url}
               >
                 <Link href={item.url}>
-                  {item.icon && <item.icon />}
+                  {item.icon && (
+                    <div className="relative">
+                      <item.icon />
+                      {item.title === "Postcards" && hasUnreadPostcards && (
+                        <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+                      )}
+                    </div>
+                  )}
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>

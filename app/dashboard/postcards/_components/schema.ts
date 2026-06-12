@@ -23,6 +23,7 @@ export const postcardOrderSchema = z.object({
   qrToken: z.string().optional().nullable(),
   stripePaymentIntentId: z.string().optional().nullable(),
   stripeChargeId: z.string().optional().nullable(),
+  unreadCount: z.number().optional().default(0),
 });
 
 export type PostcardOrder = z.infer<typeof postcardOrderSchema>;

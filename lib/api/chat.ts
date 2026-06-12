@@ -75,6 +75,13 @@ export async function initPostcardChat(buyerId: string, locationId: string) {
   }
 
   if (existingChatId) {
+    // Reset unread count for the system user since they are opening the chat
+    await supabase
+      .from("chat_participants")
+      .update({ unread_count: 0, last_read_at: new Date().toISOString() })
+      .eq("chat_id", existingChatId)
+      .eq("user_id", systemUser.id);
+
     return { chatId: existingChatId, systemUserId: systemUser.id };
   }
 

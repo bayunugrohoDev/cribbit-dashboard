@@ -110,6 +110,10 @@ export default function Postcards() {
       openChat: (order: PostcardOrder) => {
         setSelectedChatOrder(order);
         setIsChatOpen(true);
+        queryClient.setQueryData(["postcards"], (old: PostcardOrder[] | undefined) => {
+          if (!old) return old;
+          return old.map(o => o.id === order.id ? { ...o, unreadCount: 0 } : o);
+        });
       },
     },
   });

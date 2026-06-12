@@ -43,7 +43,9 @@ export const columns: ColumnDef<PostcardOrder>[] = [
               {order.userName?.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div className="font-medium">{order.userName}</div>
+          <div className="font-medium flex items-center gap-2">
+            {order.userName}
+          </div>
         </div>
       );
     },
@@ -185,9 +187,12 @@ export const columns: ColumnDef<PostcardOrder>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" className="h-8 w-8 p-0 relative">
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
+              {!!order.unreadCount && order.unreadCount > 0 && (
+                <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -202,8 +207,14 @@ export const columns: ColumnDef<PostcardOrder>[] = [
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               //@ts-expect-error
               onSelect={() => table.options.meta?.openChat(order)}
+              className="flex justify-between items-center"
             >
-              Chat with Buyer
+              <span>Chat with Buyer</span>
+              {!!order.unreadCount && order.unreadCount > 0 && (
+                <Badge variant="destructive" className="h-5 min-w-5 p-0 px-1.5 flex items-center justify-center rounded-full text-[10px]">
+                  {order.unreadCount}
+                </Badge>
+              )}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem disabled={!order.locations.location_id}>

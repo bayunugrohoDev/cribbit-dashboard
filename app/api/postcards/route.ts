@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { getSystemUser } from "@/lib/api/chat";
 
 async function verifyAdmin(supabase: any) {
   const {
@@ -71,6 +72,22 @@ export async function GET() {
     if (profilesError) throw profilesError;
     if (locationsError) throw locationsError;
 
+    // Fetch chat unread counts for the system user
+    const systemUser = await getSystemUser();
+    const systemUserId = systemUser.id;
+
+    const { data: chats } = await supabase
+      .from("chats")
+      .select(`
+        id,
+        location_id,
+        chat_participants!inner (
+          user_id,
+          unread_count
+        )
+      `)
+      .in("location_id", locationIds);
+
     // Create maps for quick lookups
     const profilesMap = new Map(profiles.map((p) => [p.id, p]));
     const locationsMap = new Map(locations.map((l) => [l.id, l]));
@@ -103,6 +120,17 @@ export async function GET() {
         qrToken: order.qr_token || "",
         stripePaymentIntentId: order.stripe_payment_intent_id || "",
         stripeChargeId: order.stripe_charge_id || "",
+        unreadCount: (() => {
+          if (!chats) return 0;
+          // Find the chat for this location that has both the system user and the order user
+          const chat = chats.find(c => {
+             if (c.location_id !== order.location_id) return false;
+             const participants = c.chat_participants.map(p => p.user_id);
+             return participants.includes(systemUserId) && participants.includes(order.user_id);
+          });
+          if (!chat) return 0;
+          return chat.chat_participants.find(p => p.user_id === systemUserId)?.unread_count || 0;
+        })()
       };
     });
 
