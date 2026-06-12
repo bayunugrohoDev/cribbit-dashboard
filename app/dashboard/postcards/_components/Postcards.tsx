@@ -16,6 +16,7 @@ import { PostcardOrder } from "./schema";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { UpdateStatusModal } from "./UpdateStatusModal";
+import { ChatDrawer } from "./ChatDrawer";
 import { toast } from "sonner";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 
@@ -47,6 +48,9 @@ async function updatePostcardOrder({
 export default function Postcards() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedOrder, setSelectedOrder] = React.useState<PostcardOrder | null>(null);
+  
+  const [isChatOpen, setIsChatOpen] = React.useState(false);
+  const [selectedChatOrder, setSelectedChatOrder] = React.useState<PostcardOrder | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -103,6 +107,10 @@ export default function Postcards() {
     getPaginationRowModel: getPaginationRowModel(),
     meta: {
       openModal: handleOpenModal,
+      openChat: (order: PostcardOrder) => {
+        setSelectedChatOrder(order);
+        setIsChatOpen(true);
+      },
     },
   });
 
@@ -144,6 +152,17 @@ export default function Postcards() {
         onClose={handleCloseModal}
         order={selectedOrder}
         onUpdate={handleUpdate}
+      />
+
+      <ChatDrawer
+        isOpen={isChatOpen}
+        onClose={() => {
+          setIsChatOpen(false);
+          setSelectedChatOrder(null);
+        }}
+        buyerId={selectedChatOrder?.userId || null}
+        locationId={selectedChatOrder?.locations.location_id || null}
+        userName={selectedChatOrder?.userName || null}
       />
     </div>
   );

@@ -198,6 +198,13 @@ export const columns: ColumnDef<PostcardOrder>[] = [
             >
               Update Status
             </DropdownMenuItem>
+            <DropdownMenuItem
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-expect-error
+              onSelect={() => table.options.meta?.openChat(order)}
+            >
+              Chat with Buyer
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem disabled={!order.locations.location_id}>
               <Link
