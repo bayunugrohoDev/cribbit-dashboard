@@ -114,7 +114,7 @@ export const columns: ColumnDef<UserSchema>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const user = row.original;
       return (
         <DropdownMenu>
@@ -129,11 +129,22 @@ export const columns: ColumnDef<UserSchema>[] = [
             <DropdownMenuItem>
               <Link className="w-full" href={`/dashboard/users/${user.id}`}>View User</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Chat</DropdownMenuItem>
+            <DropdownMenuItem
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-expect-error
+              onSelect={() => table.options.meta?.openChat(user)}
+            >
+              Chat
+            </DropdownMenuItem>
             <DropdownMenuItem>Send Email</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Edit user</DropdownMenuItem>
-            <DropdownMenuItem className="text-red-500 hover:!text-red-500">
+            <DropdownMenuItem 
+              className="text-red-500 hover:!text-red-500"
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-expect-error
+              onSelect={() => table.options.meta?.deleteUser(user)}
+            >
               Delete user
             </DropdownMenuItem>
           </DropdownMenuContent>

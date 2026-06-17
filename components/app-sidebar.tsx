@@ -77,6 +77,11 @@ const data = {
       url: "/dashboard/postcards",
       icon: IconMail,
     },
+    {
+      title: "Support Chats",
+      url: "/dashboard/chats",
+      icon: IconMessage,
+    },
   ],
   // navClouds: [
   //   {

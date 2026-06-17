@@ -217,6 +217,16 @@ export const columns: ColumnDef<PostcardOrder>[] = [
               )}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link
+                href={`/dashboard/postcards/${order.id}/print`}
+                target="_blank"
+                className="w-full text-black dark:text-white cursor-pointer"
+              >
+                Print Postcard
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem disabled={!order.locations.location_id}>
               <Link
                 href={

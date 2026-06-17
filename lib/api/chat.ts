@@ -49,7 +49,7 @@ export async function getSystemUser() {
   return { id: authData.user.id };
 }
 
-export async function initPostcardChat(buyerId: string, locationId: string) {
+export async function initChat(userId: string, locationId: string | null = null) {
   const supabase = getServiceSupabase();
   const systemUser = await getSystemUser();
 
@@ -57,17 +57,24 @@ export async function initPostcardChat(buyerId: string, locationId: string) {
   // In the mobile app, get_common_chat_id expects user1, user2, locationId.
   // We can just query chat_participants and chats directly.
 
-  const { data: chats } = await supabase
+  let chatsQuery = supabase
     .from("chats")
-    .select("id, chat_participants!inner(user_id)")
-    .eq("location_id", locationId);
+    .select("id, chat_participants!inner(user_id)");
+
+  if (locationId) {
+    chatsQuery = chatsQuery.eq("location_id", locationId);
+  } else {
+    chatsQuery = chatsQuery.is("location_id", null);
+  }
+
+  const { data: chats } = await chatsQuery;
 
   let existingChatId: string | null = null;
 
   if (chats) {
     for (const chat of chats) {
       const participants = chat.chat_participants.map(p => p.user_id);
-      if (participants.includes(buyerId) && participants.includes(systemUser.id)) {
+      if (participants.includes(userId) && participants.includes(systemUser.id)) {
         existingChatId = chat.id;
         break;
       }
@@ -86,9 +93,14 @@ export async function initPostcardChat(buyerId: string, locationId: string) {
   }
 
   // 2. If not, create a new chat
+  const insertData: any = {};
+  if (locationId) {
+    insertData.location_id = locationId;
+  }
+
   const { data: newChat, error: chatError } = await supabase
     .from("chats")
-    .insert({ location_id: locationId })
+    .insert(insertData)
     .select("id")
     .single();
 
@@ -100,7 +112,7 @@ export async function initPostcardChat(buyerId: string, locationId: string) {
   const { error: partError } = await supabase
     .from("chat_participants")
     .insert([
-      { chat_id: newChat.id, user_id: buyerId, unread_count: 0 },
+      { chat_id: newChat.id, user_id: userId, unread_count: 0 },
       { chat_id: newChat.id, user_id: systemUser.id, unread_count: 0 },
     ]);
 

@@ -40,7 +40,7 @@ export function ChatDrawer({ isOpen, onClose, buyerId, locationId, userName }: C
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen && buyerId && locationId) {
+    if (isOpen && buyerId) {
       initChat();
     } else {
       setChatId(null);
@@ -154,9 +154,10 @@ export function ChatDrawer({ isOpen, onClose, buyerId, locationId, userName }: C
             </div>
           ) : (
             <>
-              <ScrollArea className="flex-1 p-4">
-                <div className="flex flex-col space-y-4">
-                  {messages.length === 0 ? (
+              <div className="flex-1 min-h-0">
+                <ScrollArea className="h-full w-full">
+                  <div className="flex flex-col space-y-4 p-4">
+                    {messages.length === 0 ? (
                     <div className="text-center text-muted-foreground mt-10 text-sm">
                       No messages yet. Send a message to start the conversation!
                     </div>
@@ -190,8 +191,9 @@ export function ChatDrawer({ isOpen, onClose, buyerId, locationId, userName }: C
                     })
                   )}
                   <div ref={scrollRef} />
-                </div>
-              </ScrollArea>
+                  </div>
+                </ScrollArea>
+              </div>
 
               <div className="p-4 bg-background border-t">
                 <form

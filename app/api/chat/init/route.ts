@@ -1,18 +1,21 @@
 import { NextResponse } from "next/server";
-import { initPostcardChat } from "@/lib/api/chat";
+import { initChat } from "@/lib/api/chat";
 
 export async function POST(req: Request) {
   try {
-    const { buyerId, locationId } = await req.json();
+    const { buyerId, userId, locationId } = await req.json();
+    
+    // Support both buyerId and userId for backward compatibility
+    const targetUserId = userId || buyerId;
 
-    if (!buyerId || !locationId) {
+    if (!targetUserId) {
       return NextResponse.json(
-        { error: "buyerId and locationId are required" },
+        { error: "userId is required" },
         { status: 400 }
       );
     }
 
-    const { chatId, systemUserId } = await initPostcardChat(buyerId, locationId);
+    const { chatId, systemUserId } = await initChat(targetUserId, locationId);
 
     return NextResponse.json({ chatId, systemUserId });
   } catch (error: any) {

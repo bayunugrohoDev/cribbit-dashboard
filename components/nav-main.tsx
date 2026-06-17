@@ -31,7 +31,16 @@ export function NavMain({
     queryFn: fetchPostcards,
   });
 
+  const { data: supportChats } = useQuery({
+    queryKey: ["support-chats"],
+    queryFn: async () => {
+      const res = await fetch("/api/support-chats");
+      return res.json();
+    },
+  });
+
   const hasUnreadPostcards = postcards?.some((p) => p.unreadCount && p.unreadCount > 0);
+  const hasUnreadSupportChats = supportChats?.some((c: any) => c.unreadCount && c.unreadCount > 0);
 
   return (
     <SidebarGroup>
@@ -68,6 +77,9 @@ export function NavMain({
                     <div className="relative">
                       <item.icon />
                       {item.title === "Postcards" && hasUnreadPostcards && (
+                        <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+                      )}
+                      {item.title === "Support Chats" && hasUnreadSupportChats && (
                         <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
                       )}
                     </div>
