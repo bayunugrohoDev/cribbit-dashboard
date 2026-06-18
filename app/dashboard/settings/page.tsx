@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,13 +15,17 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { fetchSettings, updateSettings, SystemSetting } from "@/lib/api/settings";
 import { toast } from "sonner";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
+import { PatternConfigClient } from "./components/pattern-config-client";
+import { PatternPreviewClient } from "./components/pattern-preview-client";
 
 export default function SettingsPage() {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = React.useState("address");
   const [formValues, setFormValues] = React.useState<Record<string, string>>({});
   
   // Confirmation Modal State
@@ -113,25 +117,49 @@ export default function SettingsPage() {
     );
   }
 
+  const navItems = [
+    { id: "address", title: "Address Patterns" },
+    { id: "postcard", title: "Postcard Configuration" },
+    { id: "stripe", title: "Stripe Settings" },
+    { id: "email", title: "Email Notification" },
+  ];
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="mb-6">
+    <div className="p-6 w-full max-w-5xl mx-auto space-y-6">
+      <div className="mb-6 space-y-0.5">
         <h1 className="text-2xl font-bold tracking-tight">Configuration Settings</h1>
         <p className="text-muted-foreground text-sm">
           Manage integrations, secrets, pricing, and notification emails for the Cribbit platform.
         </p>
       </div>
 
-      <Tabs defaultValue="postcard" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="postcard">Postcard Configuration</TabsTrigger>
-          <TabsTrigger value="stripe">Stripe Settings</TabsTrigger>
-          <TabsTrigger value="email">Email Notification (Resend)</TabsTrigger>
-        </TabsList>
+      <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-8 lg:space-y-0 w-full">
+        <aside className="lg:w-64 shrink-0">
+          <div className="border rounded-xl p-2 bg-card shadow-sm">
+            <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
+            {navItems.map((item) => (
+              <Button
+                key={item.id}
+                variant="ghost"
+                onClick={() => setActiveTab(item.id)}
+                className={cn(
+                  "justify-start whitespace-nowrap",
+                  activeTab === item.id
+                    ? "bg-muted hover:bg-muted"
+                    : "hover:bg-transparent hover:underline"
+                )}
+              >
+                {item.title}
+              </Button>
+            ))}
+            </nav>
+          </div>
+        </aside>
 
-        {/* Tab 1: Postcard Settings */}
-        <TabsContent value="postcard">
-          <Card>
+        <div className="flex-1 min-w-0">
+          {/* Content 1: Postcard Settings */}
+          {activeTab === "postcard" && (
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Postcard Pricing & Currency</CardTitle>
               <CardDescription>
@@ -179,11 +207,11 @@ export default function SettingsPage() {
               </Button>
             </CardFooter>
           </Card>
-        </TabsContent>
+          )}
 
-        {/* Tab 2: Stripe Integration */}
-        <TabsContent value="stripe">
-          <Card>
+          {/* Content 2: Stripe Integration */}
+          {activeTab === "stripe" && (
+          <Card className="w-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <div className="space-y-1.5">
                 <CardTitle>Stripe Credentials</CardTitle>
@@ -246,11 +274,11 @@ export default function SettingsPage() {
               </Button>
             </CardFooter>
           </Card>
-        </TabsContent>
+          )}
 
-        {/* Tab 3: Email Settings */}
-        <TabsContent value="email">
-          <Card>
+          {/* Content 3: Email Settings */}
+          {activeTab === "email" && (
+          <Card className="w-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <div className="space-y-1.5">
                 <CardTitle>Resend Email Credentials & Addresses</CardTitle>
@@ -316,8 +344,48 @@ export default function SettingsPage() {
               </Button>
             </CardFooter>
           </Card>
-        </TabsContent>
-      </Tabs>
+          )}
+
+          {/* Content 4: Address Patterns */}
+          {activeTab === "address" && (
+            <Card className="shadow-sm w-full">
+              <CardHeader>
+                <CardTitle>Address Pattern Configurator</CardTitle>
+                <CardDescription>
+                  Manage global address writing fallback logic and connect it with country codes.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col items-center justify-center p-8 border border-dashed rounded-lg bg-muted/10 space-y-8">
+                  <PatternPreviewClient />
+
+                  <div className="space-y-4 text-center">
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                      The configurator requires a wide workspace to manage templates and mappings.
+                    </p>
+                    <Dialog>
+                    <DialogTrigger asChild>
+                      <Button size="lg">Launch Configurator</Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-[95vw] w-full h-[90vh] overflow-y-auto flex flex-col p-0">
+                      <DialogHeader className="p-6 pb-0 shrink-0">
+                        <DialogTitle>Address Pattern Configurator</DialogTitle>
+                        <DialogDescription>
+                          Drag and drop templates and define Google Maps tags fallbacks.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex-1 overflow-y-auto p-6 pt-0 min-h-0">
+                        <PatternConfigClient />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
 
       {/* Save Confirmation Dialog */}
       <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
