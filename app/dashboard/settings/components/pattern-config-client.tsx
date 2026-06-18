@@ -194,7 +194,7 @@ export function PatternConfigClient() {
   };
 
   const handleUpdateName = async () => {
-    if (!editPatternName) return;
+    if (!editPatternName || !selectedPatternId) return;
     try {
       await updatePatternName(selectedPatternId, editPatternName);
       alert("Name updated successfully!");
@@ -205,6 +205,7 @@ export function PatternConfigClient() {
   };
 
   const handleDelete = async () => {
+    if (!selectedPatternId) return;
     if (
       confirm(
         "Are you sure? Countries mapped to this pattern will default back to the Default Pattern.",
@@ -221,6 +222,7 @@ export function PatternConfigClient() {
   };
 
   const handleSaveSettings = async () => {
+    if (!selectedPatternId) return;
     setIsSaving(true);
     try {
       const fallbacks = templates
