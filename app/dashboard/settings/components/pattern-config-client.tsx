@@ -283,7 +283,7 @@ export function PatternConfigClient() {
   const sortedPatterns = [...initialPatterns].sort((a, b) => {
     if (a.id === "PATTERN_WESTERN_DEFAULT") return -1;
     if (b.id === "PATTERN_WESTERN_DEFAULT") return 1;
-    return a.name.localeCompare(b.name);
+    return (a.name || "").localeCompare(b.name || "");
   });
 
   if (isLoadingData) {

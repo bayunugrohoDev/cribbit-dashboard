@@ -39,8 +39,8 @@ export function NavMain({
     },
   });
 
-  const hasUnreadPostcards = postcards?.some((p) => p.unreadCount && p.unreadCount > 0);
-  const hasUnreadSupportChats = supportChats?.some((c: any) => c.unreadCount && c.unreadCount > 0);
+  const hasUnreadPostcards = Array.isArray(postcards) ? postcards.some((p) => p.unreadCount && p.unreadCount > 0) : false;
+  const hasUnreadSupportChats = Array.isArray(supportChats) ? supportChats.some((c: any) => c.unreadCount && c.unreadCount > 0) : false;
 
   return (
     <SidebarGroup>
