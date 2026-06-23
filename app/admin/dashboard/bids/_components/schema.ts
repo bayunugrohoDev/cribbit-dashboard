@@ -20,6 +20,11 @@ export const bidSchema = z.object({
   price_max: z.number(),
   date: z.string(),
   status: z.enum(["Winning", "Outbid", "Accepted", "Pending"]),
+  contact_method: z.string().optional(),
+  has_loan_promise: z.string().nullable().optional(),
+  must_sell_first: z.boolean().nullable().optional(),
+  move_in_timeline: z.string().nullable().optional(),
+  message: z.string().nullable().optional(),
 });
 
 export type Bid = z.infer<typeof bidSchema>;

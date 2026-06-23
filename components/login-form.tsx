@@ -2,7 +2,7 @@
 
 import { useFormStatus } from "react-dom";
 import { useSearchParams } from "next/navigation";
-import { login } from "@/app/login/actions";
+import { login } from "@/app/admin/login/actions";
 import Head from "next/head";
 import { Lock, Mail } from "lucide-react";
 

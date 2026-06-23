@@ -94,6 +94,21 @@ export const columns: ColumnDef<Bid>[] = [
     },
   },
   {
+    accessorKey: "contact_method",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Method" />
+    ),
+    cell: ({ row }) => {
+      const method = row.getValue("contact_method") as string;
+      const isBroker = method === "broker";
+      return (
+        <Badge variant={isBroker ? "default" : "outline"} className={isBroker ? "bg-blue-100 text-blue-800 hover:bg-blue-200" : ""}>
+          {isBroker ? "Broker" : "Direct"}
+        </Badge>
+      );
+    },
+  },
+  {
     accessorKey: "status",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
@@ -165,6 +180,21 @@ export const columns: ColumnDef<Bid>[] = [
               onSelect={() => table.options.meta?.openModal(bid)}
             >
               Update Status
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-expect-error
+              onSelect={() => table.options.meta?.openDetailsModal(bid)}
+            >
+              View Details
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-expect-error
+              onSelect={() => table.options.meta?.openChat(bid)}
+              className="flex justify-between items-center"
+            >
+              <span>Chat with Buyer</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             {/* <DropdownMenuItem

@@ -16,6 +16,8 @@ import { Bid } from "./schema";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { UpdateStatusModal } from "./UpdateStatusModal";
+import { BidDetailsModal } from "./BidDetailsModal";
+import { ChatDrawer } from "../../postcards/_components/ChatDrawer";
 import { toast } from "sonner";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 
@@ -30,9 +32,15 @@ async function updateBidStatus(
   return { id: bidId, status };
 }
 
-export default function Bids() {
+export default function Bids({ filterType }: { filterType?: "broker" | "direct" } = {}) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedBid, setSelectedBid] = React.useState<Bid | null>(null);
+
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = React.useState(false);
+  const [detailsBid, setDetailsBid] = React.useState<Bid | null>(null);
+
+  const [isChatOpen, setIsChatOpen] = React.useState(false);
+  const [selectedChatBid, setSelectedChatBid] = React.useState<Bid | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -72,20 +80,49 @@ export default function Bids() {
     setSelectedBid(null);
   };
 
+  const handleOpenDetailsModal = (bid: Bid) => {
+    setDetailsBid(bid);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setIsDetailsModalOpen(false);
+    setDetailsBid(null);
+  };
+
   const handleUpdateStatus = (newStatus: Bid["status"]) => {
     if (selectedBid) {
       mutation.mutate({ bidId: selectedBid.id, status: newStatus });
     }
   };
 
+  const filteredBids = React.useMemo(() => {
+    if (!filterType) return bids;
+    if (filterType === "broker") return bids.filter((b: Bid) => b.contact_method === "broker");
+    if (filterType === "direct") return bids.filter((b: Bid) => b.contact_method !== "broker");
+    return bids;
+  }, [bids, filterType]);
+
+  const tableColumns = React.useMemo(() => {
+    if (filterType) {
+      return columns.filter(c => (c as any).accessorKey !== "contact_method");
+    }
+    return columns;
+  }, [filterType]);
+
   const table = useReactTable({
-    data: bids,
-    columns,
+    data: filteredBids,
+    columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     meta: {
       openModal: handleOpenModal,
+      openDetailsModal: handleOpenDetailsModal,
+      openChat: (bid: Bid) => {
+        setSelectedChatBid(bid);
+        setIsChatOpen(true);
+      },
     },
   });
 
@@ -110,7 +147,7 @@ export default function Bids() {
   return (
     <div className="p-6">
       <div className="rounded-lg border overflow-hidden">
-        <DataTable table={table} columns={columns} />
+        <DataTable table={table} columns={tableColumns} />
       </div>
       <div className="mt-4">
         <DataTablePagination table={table} />
@@ -121,6 +158,22 @@ export default function Bids() {
         onClose={handleCloseModal}
         bid={selectedBid}
         onUpdate={handleUpdateStatus}
+      />
+      <BidDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={handleCloseDetailsModal}
+        bid={detailsBid}
+      />
+
+      <ChatDrawer
+        isOpen={isChatOpen}
+        onClose={() => {
+          setIsChatOpen(false);
+          setSelectedChatBid(null);
+        }}
+        buyerId={selectedChatBid?.userId || null}
+        locationId={selectedChatBid?.locations.location_id || null}
+        userName={selectedChatBid?.userName || null}
       />
     </div>
   );

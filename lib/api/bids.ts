@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { bidSchema } from "@/app/dashboard/bids/_components/schema";
+import { bidSchema } from "@/app/admin/dashboard/bids/_components/schema";
 import { createClient } from "../supabase/client";
 
 export const fetchBids = async () => {

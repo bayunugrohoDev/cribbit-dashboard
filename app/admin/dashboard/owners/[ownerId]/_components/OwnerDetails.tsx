@@ -55,8 +55,8 @@ export default function OwnerDetails({ ownerId }: { ownerId: string }) {
     <div>
       <div className="mb-6 flex items-center space-x-4">
         <Link
-          href="/dashboard/owners"
-          className="text-muted-foreground hover:text-black"
+          href="/admin/dashboard/owners"
+          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-900 mb-6"
         >
           <ChevronLeft className="h-6 w-6" />
         </Link>

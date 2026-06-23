@@ -9,7 +9,7 @@ export async function GET() {
     const { data: bids, error: bidsError } = await supabase
       .from("bids")
       .select(
-        `id, created_at, price, price_min, price_max, status, user_id, location_id`
+        `id, created_at, price, price_min, price_max, status, user_id, location_id, contact_method, has_loan_promise, must_sell_first, move_in_timeline, message`
       )
       .order("created_at", { ascending: false });
 
@@ -75,6 +75,11 @@ export async function GET() {
           bid.status === "Accepted"
             ? bid.status
             : "Pending",
+        contact_method: bid.contact_method || "direct_post",
+        has_loan_promise: bid.has_loan_promise || null,
+        must_sell_first: bid.must_sell_first ?? null,
+        move_in_timeline: bid.move_in_timeline || null,
+        message: bid.message || null,
         date: bid.created_at || "",
       };
     });

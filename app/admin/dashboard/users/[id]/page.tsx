@@ -71,13 +71,13 @@ const SingleUsersPage = () => {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+            <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
           </BreadcrumbItem>
 
           <BreadcrumbSeparator />
 
           <BreadcrumbItem>
-            <BreadcrumbLink href="/dashboard/users">Users</BreadcrumbLink>
+            <BreadcrumbLink href="/admin/dashboard/users">Users</BreadcrumbLink>
           </BreadcrumbItem>
 
           <BreadcrumbSeparator />

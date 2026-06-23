@@ -23,7 +23,7 @@ export async function login(formData: FormData) {
     console.log("Auth error:", authError);
 
   if (authError || !data.user) {
-    return redirect("/login?error=Invalid credentials");
+    return redirect("/admin/login?error=Invalid credentials");
   }
 
   // 2. Cek Role di tabel Profiles
@@ -38,9 +38,9 @@ export async function login(formData: FormData) {
   if (profileError || (profile.role !== "admin" && profile.role !== "super_admin")) {
     // Jika bukan admin, paksa logout dan kembalikan ke login
     await supabase.auth.signOut();
-    return redirect("/login?error=Unauthorized access");
+    return redirect("/admin/login?error=Unauthorized access");
   }
 
   // 3. Berhasil
-  redirect("/dashboard");
+  redirect("/admin/dashboard");
 }

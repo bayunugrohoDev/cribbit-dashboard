@@ -41,100 +41,76 @@ import Image from "next/image";
 
 const data = {
   // Removed hardcoded user data as it will now come from props
-  navMain: [
+  navGroups: [
     {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: IconDashboard,
+      items: [
+        {
+          title: "Dashboard",
+          url: "/admin/dashboard",
+          icon: IconDashboard,
+        },
+      ],
     },
     {
-      title: "Users",
-      url: "/dashboard/users",
-      icon: IconUsers,
+      title: "Group Master",
+      items: [
+        {
+          title: "Users",
+          url: "/admin/dashboard/users",
+          icon: IconUsers,
+        },
+        {
+          title: "Properties",
+          url: "/admin/dashboard/properties",
+          icon: IconHome,
+        },
+        {
+          title: "Agents",
+          url: "/admin/dashboard/agents",
+          icon: IconUsers,
+        },
+        {
+          title: "Owners",
+          url: "/admin/dashboard/owners",
+          icon: IconHome,
+        },
+      ],
     },
     {
       title: "Bids",
-      url: "/dashboard/bids",
-      icon: IconTable,
+      items: [
+        // {
+        //   title: "Bids",
+        //   url: "/admin/dashboard/bids",
+        //   icon: IconTable,
+        // },
+        {
+          title: "Postcards",
+          url: "/admin/dashboard/postcards",
+          icon: IconMail,
+        },
+        {
+          title: "Brokers",
+          url: "/admin/dashboard/brokers",
+          icon: IconTable,
+        },
+      ],
     },
     {
-      title: "Properties",
-      url: "/dashboard/properties",
-      icon: IconHome,
-    },
-    {
-      title: "Agents",
-      url: "/dashboard/agents",
-      icon: IconUsers,
-    },
-    {
-      title: "Owners",
-      url: "/dashboard/owners",
-      icon: IconHome,
-    },
-    {
-      title: "Postcards",
-      url: "/dashboard/postcards",
-      icon: IconMail,
-    },
-    {
-      title: "Support Chats",
-      url: "/dashboard/chats",
-      icon: IconMessage,
+      title: "Chat",
+      items: [
+        {
+          title: "Support Chats",
+          url: "/admin/dashboard/chats",
+          icon: IconMessage,
+        },
+      ],
     },
   ],
-  // navClouds: [
-  //   {
-  //     title: "Capture",
-  //     icon: IconCamera,
-  //     isActive: true,
-  //     url: "#",
-  //     items: [
-  //       {
-  //         title: "Active Proposals",
-  //         url: "#",
-  //       },
-  //       {
-  //         title: "Archived",
-  //         url: "#",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     title: "Proposal",
-  //     icon: IconFileDescription,
-  //     url: "#",
-  //     items: [
-  //       {
-  //         title: "Active Proposals",
-  //         url: "#",
-  //       },
-  //       {
-  //         title: "Archived",
-  //         url: "#",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     title: "Prompts",
-  //     icon: IconFileAi,
-  //     url: "#",
-  //     items: [
-  //       {
-  //         title: "Active Proposals",
-  //         url: "#",
-  //       },
-  //       {
-  //         title: "Archived",
-  //         url: "#",
-  //       },
-  //     ],
-  //   },
-  // ],
   navSecondary: [
     {
       title: "Settings",
-      url: "/dashboard/settings",
+      url: "/admin/dashboard/settings",
       icon: IconSettings,
     },
     // {
@@ -201,7 +177,7 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain groups={data.navGroups} />
         {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>

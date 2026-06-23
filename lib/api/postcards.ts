@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { postcardOrderSchema } from "@/app/dashboard/postcards/_components/schema";
+import { postcardOrderSchema } from "@/app/admin/dashboard/postcards/_components/schema";
 
 export const fetchPostcards = async () => {
   const response = await fetch("/api/postcards");

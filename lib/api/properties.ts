@@ -1,8 +1,8 @@
-import { propertySchemaDetail } from "@/app/dashboard/properties/[propertyId]/_components/schema";
+import { propertySchemaDetail } from "@/app/admin/dashboard/properties/[propertyId]/_components/schema";
 import {
+  propertyFilterSchema,
   propertySchema,
-  Properties,
-} from "@/app/dashboard/properties/_components/schema";
+} from "@/app/admin/dashboard/properties/_components/schema";
 import { z } from "zod";
 import { createClient } from "../supabase/client";
 

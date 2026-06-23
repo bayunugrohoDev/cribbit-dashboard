@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ChatDrawer } from "@/app/dashboard/postcards/_components/ChatDrawer";
+import { ChatDrawer } from "@/app/admin/dashboard/postcards/_components/ChatDrawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

@@ -91,7 +91,7 @@ export default function LandingPage() {
                 <div className="flex flex-col sm:flex-row gap-6">
                   {/* Login to Dashboard Button */}
                   {/* <Link
-                    href="/login"
+                    href="/admin/login"
                     className="group relative flex items-center justify-center gap-3 px-8 py-5 rounded-full signature-gradient text-[#E6E7D9] font-['Noto_Serif',serif] text-lg border border-[#1a1d14] editorial-shadow transition-transform active:scale-95"
                   >
                     Login to Dashboard

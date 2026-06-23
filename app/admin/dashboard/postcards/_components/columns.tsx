@@ -219,19 +219,30 @@ export const columns: ColumnDef<PostcardOrder>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link
-                href={`/dashboard/postcards/${order.id}/print`}
+                href={`/admin/dashboard/postcards/${order.id}/print`}
                 target="_blank"
                 className="w-full text-black dark:text-white cursor-pointer"
               >
                 Print Postcard
               </Link>
             </DropdownMenuItem>
+            {order.qrToken && (
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/p/${order.qrToken}`}
+                  target="_blank"
+                  className="w-full text-black dark:text-white cursor-pointer"
+                >
+                  Preview QR Page
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem disabled={!order.locations.location_id}>
               <Link
                 href={
                   order.locations.location_id
-                    ? `/dashboard/properties/${order.locations.location_id}`
+                    ? `/admin/dashboard/properties/${order.locations.location_id}`
                     : "#"
                 }
                 className="w-full text-black dark:text-white"
@@ -240,7 +251,7 @@ export const columns: ColumnDef<PostcardOrder>[] = [
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href={`/dashboard/users/${order.userId}`} className="w-full text-black dark:text-white">
+              <Link href={`/admin/dashboard/users/${order.userId}`} className="w-full text-black dark:text-white">
                 View user details
               </Link>
             </DropdownMenuItem>

@@ -15,7 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 import React from "react";
-import { ChatDrawer } from "@/app/dashboard/postcards/_components/ChatDrawer";
+import { ChatDrawer } from "@/app/admin/dashboard/postcards/_components/ChatDrawer";
 import type { UserSchema } from "./schema";
 
 export default function Users() {
