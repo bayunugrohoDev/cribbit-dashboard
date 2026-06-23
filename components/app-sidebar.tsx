@@ -104,6 +104,11 @@ const data = {
           url: "/admin/dashboard/chats",
           icon: IconMessage,
         },
+        {
+          title: "User Reports",
+          url: "/admin/dashboard/reports",
+          icon: IconReport,
+        },
       ],
     },
   ],
