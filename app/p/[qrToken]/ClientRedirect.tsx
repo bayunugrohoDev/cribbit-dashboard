@@ -19,7 +19,7 @@ export default function ClientRedirect({ qrToken }: { qrToken: string }) {
         window.location.href = "https://apps.apple.com/app/cribbit/id123456789";
       } else {
         // Fallback
-        window.location.href = "https://cribbit.se";
+        window.location.href = "https://www.sunnyatsea.se/";
       }
     }, 2500);
   };

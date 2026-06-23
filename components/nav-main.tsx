@@ -10,6 +10,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -26,6 +29,7 @@ export function NavMain({
       title: string;
       url: string;
       icon?: Icon;
+      subItemsType?: "postcards" | "brokers";
     }[];
   }[];
 }) {
