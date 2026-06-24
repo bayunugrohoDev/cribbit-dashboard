@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
 import {
   X,
@@ -18,7 +19,7 @@ export default async function PostcardLandingPage({
   params: Promise<{ qrToken: string }>;
 }) {
   const { qrToken } = await params;
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   // Fetch the postcard order and location
   const { data: order, error } = await supabase
@@ -55,8 +56,77 @@ export default async function PostcardLandingPage({
   const buyerName = buyer?.full_name || "En intressent";
   const avatarInitial = buyerName.charAt(0).toUpperCase();
 
+  let finalAvatarUrl = null;
+  if (buyer?.avatar_url) {
+    if (buyer.avatar_url.startsWith("http")) {
+      finalAvatarUrl = buyer.avatar_url;
+    } else {
+      const { data: publicUrlData } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(buyer.avatar_url);
+      finalAvatarUrl = publicUrlData.publicUrl;
+    }
+  }
+
   const priceMin = order.price_min?.toLocaleString("sv-SE") || "0";
   const priceMax = order.price_max?.toLocaleString("sv-SE") || "0";
+
+  // --- Statistics Logic ---
+  const { data: houseBids } = await supabase
+    .from("bids")
+    .select("price_min, price_max, created_at")
+    .eq("location_id", location?.id);
+
+  const currentBidders = houseBids || [];
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const newBiddersLastWeek = currentBidders.filter(
+    (b) => b.created_at && new Date(b.created_at) > oneWeekAgo
+  ).length;
+
+  let streetInterestCount: number | null = null;
+  let valuationDifference: number | null = null;
+
+  if (location?.street && location?.city) {
+    const { data: streetLocs } = await supabase
+      .from("locations")
+      .select("id")
+      .eq("street", location.street)
+      .eq("city", location.city);
+
+    if (streetLocs && streetLocs.length > 0) {
+      const locIds = streetLocs.map((l: any) => l.id);
+
+      const { count: watchCount } = await supabase
+        .from("watches")
+        .select("*", { count: "exact", head: true })
+        .in("location_id", locIds);
+
+      const { count: bidCount } = await supabase
+        .from("bids")
+        .select("*", { count: "exact", head: true })
+        .in("location_id", locIds);
+
+      streetInterestCount = (watchCount || 0) + (bidCount || 0);
+
+      const { data: streetBids } = await supabase
+        .from("bids")
+        .select("price_min, price_max")
+        .in("location_id", locIds);
+
+      if (streetBids && streetBids.length > 0 && currentBidders.length > 0) {
+        const sumStreet = streetBids.reduce((acc: number, bid: any) => acc + ((bid.price_min || 0) + (bid.price_max || 0)) / 2, 0);
+        const avgStreet = sumStreet / streetBids.length;
+
+        const sumHouse = currentBidders.reduce((acc: number, bid: any) => acc + ((bid.price_min || 0) + (bid.price_max || 0)) / 2, 0);
+        const avgHouse = sumHouse / currentBidders.length;
+
+        if (avgStreet > 0) {
+          valuationDifference = Math.round(((avgHouse - avgStreet) / avgStreet) * 100);
+        }
+      }
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-100 flex justify-center">
@@ -101,10 +171,10 @@ export default async function PostcardLandingPage({
 
           <div className="flex items-center justify-between py-3 border-b border-gray-200">
             <div className="flex items-center gap-4 flex-1">
-              {buyer?.avatar_url ? (
+              {finalAvatarUrl ? (
                 <div className="w-[42px] h-[42px] rounded-full bg-gray-200 overflow-hidden shrink-0 border border-black/10">
                   <img
-                    src={buyer.avatar_url}
+                    src={finalAvatarUrl}
                     alt="Avatar"
                     className="w-full h-full object-cover"
                   />
@@ -149,7 +219,7 @@ export default async function PostcardLandingPage({
         <div className="px-5 mt-10">
           <div className="border-b border-gray-400 pb-2 mb-4">
             <h2 className="text-[14px] font-bold text-black tracking-tight">
-              Statistik (comming soon)
+              Statistik
             </h2>
           </div>
 
@@ -157,27 +227,27 @@ export default async function PostcardLandingPage({
             <div className="flex items-center gap-4">
               <Heart size={28} color="#000" strokeWidth={1.5} />
               <p className="flex-1 font-sans text-[15px] text-black leading-5">
-                5 nya intressenter senaste veckan.
+                {newBiddersLastWeek} nya intressenter senaste veckan.
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <Eye size={28} color="#000" strokeWidth={1.5} />
-              <p className="flex-1 font-sans text-[15px] text-black leading-5">
-                14 personer har tittat på ditt hus senaste månaden (+3%)
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <Home size={28} color="#000" strokeWidth={1.5} />
-              <p className="flex-1 font-sans text-[15px] text-black leading-5">
-                41 personer är intresserade av din gata. +7% senaste månaden
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <CircleDollarSign size={28} color="#000" strokeWidth={1.5} />
-              <p className="flex-1 font-sans text-[15px] text-black leading-5">
-                Intressenterna värderar ditt hus 5% högre än snittet på gatan.
-              </p>
-            </div>
+
+            {streetInterestCount !== null && (
+              <div className="flex items-center gap-4">
+                <Home size={28} color="#000" strokeWidth={1.5} />
+                <p className="flex-1 font-sans text-[15px] text-black leading-5">
+                  {streetInterestCount} personer är intresserade av din gata.
+                </p>
+              </div>
+            )}
+
+            {valuationDifference !== null && (
+              <div className="flex items-center gap-4">
+                <CircleDollarSign size={28} color="#000" strokeWidth={1.5} />
+                <p className="flex-1 font-sans text-[15px] text-black leading-5">
+                  Intressenterna värderar ditt hus {valuationDifference > 0 ? `${valuationDifference}% högre` : `${Math.abs(valuationDifference)}% lägre`} än snittet på gatan.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -183,6 +183,9 @@ export const columns: ColumnDef<Bid>[] = [
             onClick={() => table.options.meta?.openChat(bid)}
           >
             <MessageCircle className="h-4 w-4" />
+            {!!bid.unreadCount && bid.unreadCount > 0 && (
+              <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
+            )}
           </Button>
 
           {/* More Actions Dropdown */}
