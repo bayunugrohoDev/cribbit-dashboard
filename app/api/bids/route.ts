@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { getSystemUser } from "@/lib/api/chat";
 
 export async function GET() {
   const supabase = await createClient();
@@ -48,6 +49,22 @@ export async function GET() {
     const profilesMap = new Map(profiles.map((p) => [p.id, p]));
     const locationsMap = new Map(locations.map((l) => [l.id, l]));
 
+    // Fetch chat unread counts for the system user
+    const systemUser = await getSystemUser();
+    const systemUserId = systemUser.id;
+
+    const { data: chats } = await supabase
+      .from("chats")
+      .select(`
+        id,
+        location_id,
+        chat_participants!inner (
+          user_id,
+          unread_count
+        )
+      `)
+      .in("location_id", locationIds);
+
     // 4. Stitch the data together
     const formattedBids = bids.map((bid) => {
       const user = profilesMap.get(bid.user_id);
@@ -81,6 +98,16 @@ export async function GET() {
         move_in_timeline: bid.move_in_timeline || null,
         message: bid.message || null,
         date: bid.created_at || "",
+        unreadCount: (() => {
+          if (!chats) return 0;
+          const chat = chats.find(c => {
+             if (c.location_id !== bid.location_id) return false;
+             const participants = c.chat_participants.map(p => p.user_id);
+             return participants.includes(systemUserId) && participants.includes(bid.user_id);
+          });
+          if (!chat) return 0;
+          return chat.chat_participants.find(p => p.user_id === systemUserId)?.unread_count || 0;
+        })()
       };
     });
     console.log("formattedBids:", formattedBids);

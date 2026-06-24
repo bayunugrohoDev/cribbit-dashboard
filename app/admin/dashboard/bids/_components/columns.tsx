@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, MessageCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -160,68 +160,83 @@ export const columns: ColumnDef<Bid>[] = [
   },
   {
     id: "actions",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Actions"
+        className="text-center"
+      />
+    ),
     cell: ({ row, table }) => {
       const bid = row.original;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-            <DropdownMenuItem
-              // TODO :
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              //@ts-expect-error
-              onSelect={() => table.options.meta?.openModal(bid)}
-            >
-              Update Status
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              //@ts-expect-error
-              onSelect={() => table.options.meta?.openDetailsModal(bid)}
-            >
-              View Details
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              //@ts-expect-error
-              onSelect={() => table.options.meta?.openChat(bid)}
-              className="flex justify-between items-center"
-            >
-              <span>Chat with Buyer</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {/* <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(bid.id)}
-            >
-              Copy bid ID
-            </DropdownMenuItem> */}
-            <DropdownMenuItem disabled={!bid.locations.location_id}>
-              <Link
-                href={
-                  bid.locations.location_id
-                    ? `/dashboard/properties/${bid.locations.location_id}`
-                    : "#"
-                }
-                className="text-black"
+        <div className="flex items-center justify-end gap-1">
+          {/* Chat Action */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 relative"
+            title="Chat with Buyer"
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-expect-error
+            onClick={() => table.options.meta?.openChat(bid)}
+          >
+            <MessageCircle className="h-4 w-4" />
+          </Button>
+
+          {/* More Actions Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+              <DropdownMenuItem
+                // TODO :
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-expect-error
+                onSelect={() => table.options.meta?.openModal(bid)}
               >
-                View property details
-              </Link>
-            </DropdownMenuItem>
-            {/* <DropdownMenuItem>View bid details</DropdownMenuItem> */}
-            <DropdownMenuItem>
-              <Link href={`/dashboard/users/${bid.userId}`} className="text-black">
-                View user details
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                Update Status
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-expect-error
+                onSelect={() => table.options.meta?.openDetailsModal(bid)}
+              >
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {/* <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(bid.id)}
+              >
+                Copy bid ID
+              </DropdownMenuItem> */}
+              <DropdownMenuItem disabled={!bid.locations.location_id}>
+                <Link
+                  href={
+                    bid.locations.location_id
+                      ? `/dashboard/properties/${bid.locations.location_id}`
+                      : "#"
+                  }
+                  className="text-black"
+                >
+                  View property details
+                </Link>
+              </DropdownMenuItem>
+              {/* <DropdownMenuItem>View bid details</DropdownMenuItem> */}
+              <DropdownMenuItem>
+                <Link href={`/dashboard/users/${bid.userId}`} className="text-black">
+                  View user details
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     },
   },

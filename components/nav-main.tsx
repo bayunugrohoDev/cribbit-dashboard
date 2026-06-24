@@ -61,7 +61,7 @@ export function NavMain({
     : false;
   const hasUnreadBrokers = Array.isArray(bids)
     ? bids.some(
-        (b: any) => b.contact_method === "broker" && b.status === "Pending",
+        (b: any) => b.contact_method === "broker" && b.unreadCount && b.unreadCount > 0,
       )
     : false;
 
@@ -127,7 +127,7 @@ export function NavMain({
                               <span className="truncate">
                                 {b.locations?.streetNumber} {b.locations?.route}
                               </span>
-                              {b.status === "Pending" ? (
+                              {b.unreadCount && b.unreadCount > 0 ? (
                                 <span className="ml-auto h-2 w-2 rounded-full bg-red-500" />
                               ) : null}
                             </Link>

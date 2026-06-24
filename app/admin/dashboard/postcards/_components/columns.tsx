@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, MessageCircle, Printer, QrCode } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +38,10 @@ export const columns: ColumnDef<PostcardOrder>[] = [
       return (
         <div className="flex items-center space-x-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={order.userAvatar || undefined} alt={order.userName} />
+            <AvatarImage
+              src={order.userAvatar || undefined}
+              alt={order.userName}
+            />
             <AvatarFallback>
               {order.userName?.charAt(0).toUpperCase()}
             </AvatarFallback>
@@ -59,7 +62,8 @@ export const columns: ColumnDef<PostcardOrder>[] = [
     ),
     cell: ({ row }) => {
       const { route, streetNumber, postal_town } = row.original.locations;
-      const address = `${route ?? ""} ${streetNumber ?? ""}, ${postal_town ?? ""}`.trim();
+      const address =
+        `${route ?? ""} ${streetNumber ?? ""}, ${postal_town ?? ""}`.trim();
       return (
         <div className="text-sm text-muted-foreground">
           {address === "," ? "No address" : address}
@@ -84,7 +88,9 @@ export const columns: ColumnDef<PostcardOrder>[] = [
       const price_min = formatCurrency(row.original.price_min);
       const price_max = formatCurrency(row.original.price_max);
 
-      return <div className="font-medium text-xs whitespace-nowrap">{`${price_min} - ${price_max}`}</div>;
+      return (
+        <div className="font-medium text-xs whitespace-nowrap">{`${price_min} - ${price_max}`}</div>
+      );
     },
   },
   {
@@ -114,7 +120,11 @@ export const columns: ColumnDef<PostcardOrder>[] = [
         );
       }
 
-      return <div className="font-semibold text-green-700 dark:text-green-400">{formatted}</div>;
+      return (
+        <div className="font-semibold text-green-700 dark:text-green-400">
+          {formatted}
+        </div>
+      );
     },
   },
   {
@@ -124,18 +134,23 @@ export const columns: ColumnDef<PostcardOrder>[] = [
     ),
     cell: ({ row }) => {
       const status = row.getValue("status") as PostcardOrder["status"];
-      
+
       let badgeClass = "";
       if (status === "paid") {
-        badgeClass = "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+        badgeClass =
+          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
       } else if (status === "sent") {
-        badgeClass = "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+        badgeClass =
+          "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
       } else if (status === "failed") {
-        badgeClass = "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+        badgeClass =
+          "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
       } else if (status === "cancelled") {
-        badgeClass = "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
+        badgeClass =
+          "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
       } else {
-        badgeClass = "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+        badgeClass =
+          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
       }
 
       return (
@@ -171,7 +186,10 @@ export const columns: ColumnDef<PostcardOrder>[] = [
     cell: ({ row }) => {
       const qrToken = row.original.qrToken;
       return qrToken ? (
-        <Badge variant="outline" className="font-mono text-[10px] max-w-[100px] truncate">
+        <Badge
+          variant="outline"
+          className="font-mono text-[10px] max-w-[100px] truncate"
+        >
           {qrToken}
         </Badge>
       ) : (
@@ -181,97 +199,132 @@ export const columns: ColumnDef<PostcardOrder>[] = [
   },
   {
     id: "actions",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Actions"
+        className="text-center"
+      />
+    ),
     cell: ({ row, table }) => {
       const order = row.original;
+      const isPaid = order.status === "paid";
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0 relative">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-              {!!order.unreadCount && order.unreadCount > 0 && (
-                <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              //@ts-expect-error
-              onSelect={() => table.options.meta?.openModal(order)}
-            >
-              Update Status
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              //@ts-expect-error
-              onSelect={() => table.options.meta?.openChat(order)}
-              className="flex justify-between items-center"
-            >
-              <span>Chat with Buyer</span>
-              {!!order.unreadCount && order.unreadCount > 0 && (
-                <Badge variant="destructive" className="h-5 min-w-5 p-0 px-1.5 flex items-center justify-center rounded-full text-[10px]">
-                  {order.unreadCount}
-                </Badge>
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+        <div className="flex items-center justify-end gap-1">
+          {/* Chat Action */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 relative"
+            title="Chat with Buyer"
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-expect-error
+            onClick={() => table.options.meta?.openChat(order)}
+          >
+            <MessageCircle className="h-4 w-4" />
+            {!!order.unreadCount && order.unreadCount > 0 && (
+              <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
+            )}
+          </Button>
+
+          {/* Print Action */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            title={
+              isPaid ? "Print Postcard" : "Cannot print: Order is not paid"
+            }
+            disabled={!isPaid}
+            asChild={isPaid}
+          >
+            {isPaid ? (
               <Link
                 href={`/admin/dashboard/postcards/${order.id}/print`}
                 target="_blank"
-                className="w-full text-black dark:text-white cursor-pointer"
               >
-                Print Postcard
+                <Printer className="h-4 w-4" />
               </Link>
-            </DropdownMenuItem>
-            {order.qrToken && (
-              <DropdownMenuItem asChild>
+            ) : (
+              <div>
+                <Printer className="h-4 w-4 opacity-50" />
+              </div>
+            )}
+          </Button>
+
+          {/* Preview QR Page Action */}
+          {order.qrToken ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              title="Preview QR Page"
+              asChild
+            >
+              <Link href={`/p/${order.qrToken}`} target="_blank">
+                <QrCode className="h-4 w-4" />
+              </Link>
+            </Button>
+          ) : (
+            <div className="h-8 w-8" />
+          )}
+
+          {/* More Actions Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-expect-error
+                onSelect={() => table.options.meta?.openModal(order)}
+              >
+                Update Status
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem disabled={!order.locations.location_id}>
                 <Link
-                  href={`/p/${order.qrToken}`}
-                  target="_blank"
-                  className="w-full text-black dark:text-white cursor-pointer"
+                  href={
+                    order.locations.location_id
+                      ? `/admin/dashboard/properties/${order.locations.location_id}`
+                      : "#"
+                  }
+                  className="w-full text-black dark:text-white"
                 >
-                  Preview QR Page
+                  View property details
                 </Link>
               </DropdownMenuItem>
-            )}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem disabled={!order.locations.location_id}>
-              <Link
-                href={
-                  order.locations.location_id
-                    ? `/admin/dashboard/properties/${order.locations.location_id}`
-                    : "#"
-                }
-                className="w-full text-black dark:text-white"
-              >
-                View property details
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href={`/admin/dashboard/users/${order.userId}`} className="w-full text-black dark:text-white">
-                View user details
-              </Link>
-            </DropdownMenuItem>
-            {order.stripePaymentIntentId && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <a
-                    href={`https://dashboard.stripe.com/payments/${order.stripePaymentIntentId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full text-black dark:text-white cursor-pointer"
-                  >
-                    View on Stripe
-                  </a>
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuItem>
+                <Link
+                  href={`/admin/dashboard/users/${order.userId}`}
+                  className="w-full text-black dark:text-white"
+                >
+                  View user details
+                </Link>
+              </DropdownMenuItem>
+              {order.stripePaymentIntentId && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <a
+                      href={`https://dashboard.stripe.com/payments/${order.stripePaymentIntentId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full text-black dark:text-white cursor-pointer"
+                    >
+                      View on Stripe
+                    </a>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     },
   },

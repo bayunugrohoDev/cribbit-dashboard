@@ -25,6 +25,7 @@ export const bidSchema = z.object({
   must_sell_first: z.boolean().nullable().optional(),
   move_in_timeline: z.string().nullable().optional(),
   message: z.string().nullable().optional(),
+  unreadCount: z.number().optional(),
 });
 
 export type Bid = z.infer<typeof bidSchema>;

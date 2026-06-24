@@ -69,9 +69,9 @@ export default async function PostcardLandingPage({
             className="w-full h-full object-cover"
           />
           {/* Close Button Placeholder */}
-          <div className="absolute top-[60px] right-4 w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm">
+          {/* <div className="absolute top-[60px] right-4 w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm">
             <X size={24} color="#000" />
-          </div>
+          </div> */}
           {/* Share Button Placeholder */}
           <div className="absolute bottom-4 right-4 w-11 h-11 bg-[#D9AD7C] rounded-full flex items-center justify-center shadow-sm">
             <Share size={20} color="#000" />
