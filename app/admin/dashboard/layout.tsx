@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/admin/login");
   }
 
   // Ambil data profile beserta role-nya, full_name, dan avatar_url
@@ -30,7 +30,7 @@ export default async function DashboardLayout({
   if (profileError || !profile || (profile.role !== "admin" && profile.role !== "super_admin")) {
     // Jika tidak ada profil, role salah, atau tidak terotorisasi, paksa logout dan kembalikan ke login
     await supabase.auth.signOut();
-    redirect("/login?error=Account not authorized");
+    redirect("/admin/login?error=Account not authorized");
   }
 
   const userForNav = {
