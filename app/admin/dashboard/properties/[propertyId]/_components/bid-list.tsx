@@ -90,7 +90,7 @@ export function UserBids({ bids, currentUser }: UserBidsProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-[180px]">
                     <DropdownMenuItem asChild>
-                      <Link href={`/dashboard/users/${bid.user_id}`}>View Profile</Link>
+                      <Link href={`/admin/dashboard/users/${bid.user_id}`}>View Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>Message User</DropdownMenuItem>
                     <DropdownMenuSeparator />

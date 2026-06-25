@@ -180,7 +180,7 @@ export const columns: ColumnDef<Properties>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <Link
-                href={`/dashboard/properties/${property.id}`}
+                href={`/admin/dashboard/properties/${property.id}`}
                 className="text-black"
               >
                 View Property details

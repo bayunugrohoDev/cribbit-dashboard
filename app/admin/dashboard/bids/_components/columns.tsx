@@ -223,7 +223,7 @@ export const columns: ColumnDef<Bid>[] = [
                 <Link
                   href={
                     bid.locations.location_id
-                      ? `/dashboard/properties/${bid.locations.location_id}`
+                      ? `/admin/dashboard/properties/${bid.locations.location_id}`
                       : "#"
                   }
                   className="text-black"
@@ -233,7 +233,7 @@ export const columns: ColumnDef<Bid>[] = [
               </DropdownMenuItem>
               {/* <DropdownMenuItem>View bid details</DropdownMenuItem> */}
               <DropdownMenuItem>
-                <Link href={`/dashboard/users/${bid.userId}`} className="text-black">
+                <Link href={`/admin/dashboard/users/${bid.userId}`} className="text-black">
                   View user details
                 </Link>
               </DropdownMenuItem>

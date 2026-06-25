@@ -127,7 +127,7 @@ export const columns: ColumnDef<UserSchema>[] = [
           <DropdownMenuContent align="end" className="w-[160px]">
             {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
             <DropdownMenuItem>
-              <Link className="w-full" href={`/dashboard/users/${user.id}`}>View User</Link>
+              <Link className="w-full" href={`/admin/dashboard/users/${user.id}`}>View User</Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -67,7 +67,7 @@ export const columns: ColumnDef<OwnerGroup>[] = [
         <div className="text-right">
           <Button variant="ghost" size="sm" asChild>
             <Link
-              href={`/dashboard/owners/${row.original.id}?name=${encodeURIComponent(row.original.fullName)}`}
+              href={`/admin/dashboard/owners/${row.original.id}?name=${encodeURIComponent(row.original.fullName)}`}
             >
               View Claims <ChevronRight className="ml-2 h-4 w-4" />
             </Link>
