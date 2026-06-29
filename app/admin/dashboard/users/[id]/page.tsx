@@ -18,7 +18,9 @@ import { Progress } from "@/components/ui/progress";
 
 import { fetchBidsByUserId } from "@/lib/api/bids";
 import { fetchUserWithAuthById } from "@/lib/api/users";
+import { fetchOwnerClaims } from "@/lib/api/owners";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import {
   BadgeCheck,
   Candy,
@@ -54,7 +56,13 @@ const SingleUsersPage = () => {
     enabled: !!params.id,
   });
 
-  if (isUserLoading || isBidsLoading) {
+  const { data: claims, isLoading: isClaimsLoading } = useQuery({
+    queryKey: ["ownerClaims", params.id],
+    queryFn: () => fetchOwnerClaims(params.id),
+    enabled: !!params.id,
+  });
+
+  if (isUserLoading || isBidsLoading || isClaimsLoading) {
     return <LoadingSkeleton />;
   }
 
@@ -168,10 +176,7 @@ const SingleUsersPage = () => {
             <div className="flex items-center gap-2 justify-between">
               <div>
                 <Avatar className="size-12">
-                  <AvatarImage
-                    src={user.avatar_url || ""}
-                    alt="user-icon"
-                  />
+                  <AvatarImage src={user.avatar_url || ""} alt="user-icon" />
                   <AvatarFallback>
                     {user.full_name?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
@@ -235,8 +240,12 @@ const SingleUsersPage = () => {
               </div>
             </div>
 
-            <p className="text-sm text-muted-foreground mt-4">
-              joined on {new Date(user.registered_at || "").toLocaleDateString()}
+            <p
+              className="text-sm text-muted-foreground mt-4"
+              suppressHydrationWarning
+            >
+              joined on{" "}
+              {new Date(user.registered_at || "").toLocaleDateString()}
             </p>
           </div>
           {/* Information Container */}
@@ -245,18 +254,56 @@ const SingleUsersPage = () => {
         {/* Right */}
         <div className="w-full xl:w-2/3 space-y-6">
           {/* Chart Container */}
-          <div className="bg-primary-foreground p-4 rounded-lg">
+          {/* <div className="bg-primary-foreground p-4 rounded-lg">
             <h1 className="text-xl font-semibold">User Activity</h1>
             <AppLineChart />
-          </div>
+          </div> */}
           {/* Chart Container */}
+
+          <div className="bg-primary-foreground p-4 rounded-lg mt-6">
+            <h1 className="text-xl font-semibold mb-4">Properties Owned</h1>
+            {isClaimsLoading ? (
+              <div className="animate-pulse space-y-4">
+                <div className="h-4 bg-muted rounded w-3/4"></div>
+                <div className="h-4 bg-muted rounded w-1/2"></div>
+              </div>
+            ) : claims && claims.length > 0 ? (
+              <div className="space-y-4">
+                {claims.map((claim: any) => (
+                  <div
+                    key={claim.id}
+                    className="flex flex-col gap-1 border-b pb-4 last:border-0 last:pb-0"
+                  >
+                    <div className="flex justify-between items-start">
+                      <span className="font-medium">
+                        {claim.location?.formatted_address ||
+                          "Unknown Location"}
+                      </span>
+                      <span className="text-xs px-2 py-1 bg-secondary rounded-full capitalize">
+                        {claim.status}
+                      </span>
+                    </div>
+                    <Link
+                      href={`/admin/dashboard/properties/${claim.location_id}`}
+                      className="text-sm text-blue-500 hover:underline"
+                    >
+                      View Property Details
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                This user has not claimed any properties.
+              </p>
+            )}
+          </div>
 
           {/* Table Container */}
           <div className="bg-primary-foreground p-4 rounded-lg">
             <h1 className="text-xl font-semibold">Bids</h1>
             <UserBids bids={bids ? bids : []} />
           </div>
-          {/* Table Container */}
         </div>
       </div>
     </div>

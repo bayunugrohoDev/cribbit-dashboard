@@ -52,7 +52,7 @@ const data = {
       ],
     },
     {
-      title: "Group Master",
+      title: "Master Data",
       items: [
         {
           title: "Users",
@@ -77,13 +77,28 @@ const data = {
       ],
     },
     {
+      title: "Interests",
+      items: [
+        {
+          title: "Property Interests",
+          url: "/admin/dashboard/property-interests",
+          icon: IconListDetails,
+        },
+        {
+          title: "Street Interests",
+          url: "/admin/dashboard/streets",
+          icon: IconListDetails,
+        },
+      ],
+    },
+    {
       title: "Bids",
       items: [
-        // {
-        //   title: "Bids",
-        //   url: "/admin/dashboard/bids",
-        //   icon: IconTable,
-        // },
+        {
+          title: "Direct Bids",
+          url: "/admin/dashboard/direct-bids",
+          icon: IconTable,
+        },
         {
           title: "Postcards",
           url: "/admin/dashboard/postcards",

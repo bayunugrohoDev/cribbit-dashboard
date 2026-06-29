@@ -53,7 +53,10 @@ export const fetchProperties = async () => {
       if (location.bids && Array.isArray(location.bids)) {
         totalBids = location.bids.length;
         highestBid = location.bids.reduce(
-          (max: number, bid: any) => (bid.price > max ? bid.price : max),
+          (max: number, bid: any) => {
+            const bidPrice = bid.price_max || bid.price_min || bid.price || 0;
+            return bidPrice > max ? bidPrice : max;
+          },
           0,
         );
       }
@@ -92,12 +95,54 @@ export type PropertyDetail = z.infer<typeof propertySchemaDetail>;
 export const fetchPropertiesDetail = async (
   propertyId: string,
 ): Promise<PropertyDetail> => {
-  const response = await fetch(`/api/properties/${propertyId}`);
+  const supabase = createClient();
+  const { data: location, error } = await supabase
+    .from("locations")
+    .select(`
+      *,
+      location_claims (
+        status,
+        profiles (*)
+      )
+    `)
+    .eq("id", propertyId)
+    .single();
 
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
+  if (error) {
+    console.error("Error fetching property detail:", error);
+    throw error;
   }
 
-  const data = await response.json();
-  return propertySchemaDetail.parse(data);
+  let ownerName = "Unclaimed";
+  let ownerEmail = "-";
+  let ownerAvatar = null;
+  let ownerId = null;
+
+  if (location?.location_claims) {
+    const claims = Array.isArray(location.location_claims)
+      ? location.location_claims
+      : [location.location_claims];
+    const approvedClaim = claims.find((c: any) => c.status?.toLowerCase() === "approved") || claims[0];
+    if (approvedClaim?.profiles) {
+      const ownerProfile = Array.isArray(approvedClaim.profiles)
+        ? approvedClaim.profiles[0]
+        : approvedClaim.profiles;
+      ownerName = ownerProfile?.full_name || "Unknown Owner";
+      ownerAvatar = ownerProfile?.avatar_url || null;
+      ownerEmail = ownerProfile?.email || "-";
+      ownerId = ownerProfile?.id || null;
+    }
+  }
+
+  const processedData = {
+    ...location,
+    owner: {
+      id: ownerId,
+      name: ownerName,
+      email: ownerEmail,
+      avatarUrl: ownerAvatar,
+    },
+  };
+
+  return propertySchemaDetail.parse(processedData);
 };

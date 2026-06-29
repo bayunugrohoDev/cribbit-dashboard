@@ -19,6 +19,7 @@ export const ownerSchema = z.object({
       city: z.string().nullable(),
     })
     .nullable(),
+  location_id: z.string().nullable(),
 });
 
 export type OwnerSchema = z.infer<typeof ownerSchema>;

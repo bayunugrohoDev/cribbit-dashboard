@@ -12,4 +12,10 @@ export const propertySchemaDetail = z.object({
   postal_code: z.string().nullable(),
   region: z.string().nullable(),
   place_id: z.string(),
+  owner: z.object({
+    id: z.string().nullable(),
+    name: z.string(),
+    email: z.string(),
+    avatarUrl: z.string().nullable(),
+  }).optional(),
 });

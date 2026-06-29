@@ -9,10 +9,12 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { UserBids } from "./_components/bid-list";
+import { InterestList } from "./_components/interest-list";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPropertiesDetail } from "@/lib/api/properties";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { getCurrentUser } from "@/lib/api/users";
 import { fetchBidsByLocationId } from "@/lib/api/bids";
 
@@ -108,36 +110,66 @@ export default function PropertyDetailPage() {
             </div>
             <div>
               <h3 className="text-lg font-semibold">Owner</h3>
-              <p>N/A (Locations table does not contain owner info)</p>
+              {property.owner?.name !== "Unclaimed" ? (
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="font-medium">{property.owner?.name}</span>
+                  {property.owner?.id && (
+                    <Link
+                      href={`/admin/dashboard/users/${property.owner.id}`}
+                      className="text-xs text-blue-500 hover:underline"
+                    >
+                      (View Profile)
+                    </Link>
+                  )}
+                </div>
+              ) : (
+                <p className="text-muted-foreground mt-1">Unclaimed</p>
+              )}
             </div>
             <div>
               <h3 className="text-lg font-semibold">Agent</h3>
               <p>N/A (Locations table does not contain agent info)</p>
             </div>
-            <div>
+            {/* <div>
               <h3 className="text-lg font-semibold">Status</h3>
               <Badge
                 className={`bg-gray-100 text-gray-700 border-none shadow-none`}
               >
                 Unknown (Locations table does not contain status info)
               </Badge>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>
 
-      {/* Bidders List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Bidders</CardTitle>
-          <CardDescription>
-            Users who have bid on this property.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <UserBids bids={bids ?? null} currentUser={user ?? null} />
-        </CardContent>
-      </Card>
+      {/* Engagement Information */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        {/* Still Watching */}
+        <Card className="flex flex-col h-full">
+          <CardHeader>
+            <CardTitle>Still Watching (Interests)</CardTitle>
+            <CardDescription>
+              Users who have watched this property but have not placed a bid.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1 overflow-y-auto max-h-[500px]">
+            <InterestList propertyId={params.propertyId} />
+          </CardContent>
+        </Card>
+
+        {/* Bidders List */}
+        <Card className="flex flex-col h-full">
+          <CardHeader>
+            <CardTitle>Active Bids</CardTitle>
+            <CardDescription>
+              Users who have officially bid on this property.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1 overflow-y-auto max-h-[500px]">
+            <UserBids bids={bids ?? null} currentUser={user ?? null} />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

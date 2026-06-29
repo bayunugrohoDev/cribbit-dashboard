@@ -8,6 +8,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -102,7 +103,7 @@ export const columns: ColumnDef<OwnerSchema>[] = [
   },
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -113,6 +114,13 @@ export const columns: ColumnDef<OwnerSchema>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[160px]">
             <DropdownMenuItem>Review Claim Details</DropdownMenuItem>
+            {row.original.location_id && (
+              <DropdownMenuItem asChild>
+                <Link href={`/admin/dashboard/properties/${row.original.location_id}`}>
+                  View Property Details
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-green-600 hover:text-green-600!">
               Approve Claim
