@@ -5,7 +5,7 @@ import { fetchWatchesByLocationId } from "@/lib/api/interests";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { PropertyInterest } from "../../property-interests/_components/schema";
+import { PropertyInterest } from "@/app/admin/dashboard/property-interests/_components/schema";
 
 export function InterestList({ propertyId }: { propertyId: string }) {
   const { data: interests, isLoading, isError } = useQuery({
